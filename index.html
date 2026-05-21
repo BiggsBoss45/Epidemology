@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -24,10 +23,7 @@ body{
 #crt{
     position:fixed;
     inset:0;
-    width:100vw;
-    height:100vh;
     pointer-events:none;
-    z-index:9998;
     background: repeating-linear-gradient(
         to bottom,
         rgba(255,255,255,0.04),
@@ -35,22 +31,8 @@ body{
     );
 }
 
-body::after{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:9997;
-    background: radial-gradient(
-        circle at center,
-        rgba(0,0,0,0) 60%,
-        rgba(0,0,0,0.75) 100%
-    );
-}
-
 /* GLITCH */
-.glitch{ animation: glitch 0.2s; }
-
+.glitch{animation:glitch 0.2s;}
 @keyframes glitch{
     0%{transform:translate(0);}
     25%{transform:translate(-3px,1px);}
@@ -60,8 +42,8 @@ body::after{
 }
 
 /* SECTIONS */
-.section{display:none;padding:20px;}
-.active{display:block;}
+.section{display:none;}
+.active{display:block;padding:20px;}
 
 /* BUTTONS */
 button{
@@ -74,8 +56,41 @@ button{
     font-size:24px;
 }
 
-/* IMAGE */
-.imgBox{
+/* BOOT SCREEN */
+#bootScreen{
+    position:fixed;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:black;
+    z-index:9999;
+}
+
+/* SMALL LOGO */
+#logo{
+    width:22vw;
+    max-width:220px;
+    opacity:0;
+}
+
+/* BIG SUBTITLE */
+#subtitle{
+    font-size:52px;
+    margin-top:20px;
+    opacity:0;
+}
+
+/* ENTER PROMPT */
+#enterPrompt{
+    margin-top:25px;
+    font-size:24px;
+    opacity:0;
+}
+
+/* AUDIO VIS */
+#imgBox{
     width:300px;
     height:300px;
     margin:auto;
@@ -84,41 +99,10 @@ button{
     background-position:center;
 }
 
-/* VIDEO */
 video{
     width:90%;
     max-width:700px;
     filter:grayscale(1) contrast(1.4);
-}
-
-/* BOOT SCREEN */
-#bootScreen{
-    position:fixed;
-    inset:0;
-    background:black;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    z-index:9999;
-}
-
-#logo{
-    width:30vw;
-    max-width:300px;
-    opacity:0;
-}
-
-#subtitle{
-    margin-top:20px;
-    font-size:40px;
-    opacity:0;
-}
-
-#enterPrompt{
-    margin-top:30px;
-    font-size:26px;
-    opacity:0;
 }
 
 </style>
@@ -128,33 +112,27 @@ video{
 
 <div id="crt"></div>
 
-<audio id="clickSfx" src="click.mp3"></audio>
 <audio id="bootSfx" src="startup.mp3"></audio>
+<audio id="clickSfx" src="click.mp3"></audio>
 <audio id="unlockSfx" src="unlock.mp3"></audio>
 
 <!-- BOOT -->
 <div id="bootScreen">
     <img id="logo" src="EPI.png">
-    <div id="subtitle">
-        Epidemic Intelligence Service<br>
-        Epidemiology
-    </div>
+    <div id="subtitle">Epidemic Intelligence Service<br>Epidemiology</div>
     <div id="enterPrompt">PRESS ENTER TO CONTINUE</div>
 </div>
 
 <!-- HOME -->
 <div id="home" class="section active">
-
-<h1>Epidemic Intelligence Service</h1>
-
+<h1>EIS TERMINAL</h1>
 <button onclick="nav('videos')">VIDEO FILES</button>
-<button onclick="nav('password')">AUDIO ARCHIVE</button>
-
+<button onclick="nav('audio')">AUDIO ARCHIVE</button>
+<button onclick="nav('password')">SECURITY ACCESS</button>
 </div>
 
 <!-- PASSWORD -->
 <div id="password" class="section">
-
 <h2>ENTER 5 IDENTITIES</h2>
 
 <input id="n1"><br>
@@ -164,18 +142,14 @@ video{
 <input id="n5"><br>
 
 <br>
-
 <button onclick="check()">UNLOCK</button>
 <p id="status"></p>
-
 <br>
 <button onclick="nav('home')">BACK</button>
-
 </div>
 
 <!-- AUDIO -->
 <div id="audio" class="section">
-
 <h2>AUDIO LOGS</h2>
 
 <button onclick="playAudio('audio1.mp3','img1.jpg')">LOG 1</button>
@@ -185,7 +159,7 @@ video{
 <button onclick="playAudio('audio5.mp3','img5.jpg')">LOG 5</button>
 
 <audio id="player"></audio>
-<div id="imgBox" class="imgBox"></div>
+<div id="imgBox"></div>
 
 <br>
 <button onclick="audioPlayPause()">PLAY/PAUSE</button>
@@ -194,12 +168,10 @@ video{
 
 <br><br>
 <button onclick="nav('home')">BACK</button>
-
 </div>
 
 <!-- VIDEOS -->
 <div id="videos" class="section">
-
 <h2>VIDEO FILES</h2>
 
 <video controls src="video1.mp4"></video><br>
@@ -214,33 +186,30 @@ video{
 
 <br>
 <button onclick="nav('home')">BACK</button>
-
 </div>
 
 <script>
 
 let bootDone = false;
 
-/* BOOT SEQUENCE */
+/* BOOT */
 window.addEventListener("load", () => {
 
     const logo = document.getElementById("logo");
     const sub = document.getElementById("subtitle");
     const prompt = document.getElementById("enterPrompt");
 
-    document.getElementById("bootSfx").play().catch(()=>{});
-
     let start = Date.now();
 
     function animate(){
         let t = (Date.now()-start)/1000;
-        let fade = Math.min(1, t/9);
+        let f = Math.min(1, t/7);
 
-        logo.style.opacity = fade;
-        sub.style.opacity = fade;
-        prompt.style.opacity = fade;
+        logo.style.opacity = f;
+        sub.style.opacity = f;
+        prompt.style.opacity = f;
 
-        if(t < 9){
+        if(t < 7){
             requestAnimationFrame(animate);
         } else {
             bootDone = true;
@@ -250,34 +219,32 @@ window.addEventListener("load", () => {
     animate();
 });
 
-/* ENTER TO EXIT BOOT */
-window.addEventListener("keydown", (e)=>{
-    if(e.key === "Enter" && bootDone){
-        document.getElementById("bootScreen").style.display = "none";
+/* ENTER TO CONTINUE */
+window.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter" && bootDone){
+        document.getElementById("bootScreen").style.display="none";
+        document.getElementById("bootSfx").play().catch(()=>{});
     }
 });
 
-/* NAV */
+/* NAV + GLITCH */
 function nav(id){
     if(!bootDone) return;
 
     document.body.classList.add("glitch");
     setTimeout(()=>document.body.classList.remove("glitch"),200);
 
-    document.querySelectorAll(".section")
-        .forEach(s => s.classList.remove("active"));
-
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
     document.getElementById(id).classList.add("active");
 
     document.getElementById("clickSfx").play().catch(()=>{});
-});
+}
 
-/* PASSWORD SYSTEM */
-const names = ["Sarah","David","Marcus","Olivia","Daniel"];
+/* PASSWORD */
+const names=["Sarah","David","Marcus","Olivia","Daniel"];
 
 function check(){
-
-    let input = [
+    let input=[
         n1.value.trim(),
         n2.value.trim(),
         n3.value.trim(),
@@ -289,25 +256,25 @@ function check(){
 
     if(ok){
         document.getElementById("unlockSfx").play().catch(()=>{});
-        document.getElementById("status").innerText = "ACCESS GRANTED";
+        status.innerText="ACCESS GRANTED";
         setTimeout(()=>nav("audio"),800);
     } else {
-        document.getElementById("status").innerText = "ACCESS DENIED";
+        status.innerText="ACCESS DENIED";
     }
 }
 
 /* AUDIO */
-let audio = document.getElementById("player");
+let audio=document.getElementById("player");
 
-function playAudio(src,img){
-    audio.src = src;
+function playAudio(s,i){
+    audio.src=s;
     audio.play();
-    document.getElementById("imgBox").style.backgroundImage=`url(${img})`;
+    imgBox.style.backgroundImage=`url(${i})`;
 }
 
-function audioPlayPause(){ audio.paused ? audio.play() : audio.pause(); }
-function audioRewind(){ audio.currentTime = Math.max(0, audio.currentTime-10); }
-function audioForward(){ audio.currentTime = Math.min(audio.duration, audio.currentTime+10); }
+function audioPlayPause(){audio.paused?audio.play():audio.pause();}
+function audioRewind(){audio.currentTime=Math.max(0,audio.currentTime-10);}
+function audioForward(){audio.currentTime=Math.min(audio.duration,audio.currentTime+10);}
 
 </script>
 
