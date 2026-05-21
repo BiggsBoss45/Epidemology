@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CDC ARCHIVE TERMINAL</title>
+<title>Epidemic Intelligence Service</title>
 
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
@@ -62,18 +62,18 @@ body::after{
     100%{opacity:1;}
 }
 
-/* ================= VHS GLITCH ================= */
+/* ================= VHS TAB DISTORTION ================= */
 
 .glitch{
-    animation: glitch 0.15s infinite;
+    animation: glitch 0.2s infinite;
 }
 
 @keyframes glitch{
     0%{transform:translate(0);}
-    20%{transform:translate(-2px,1px);}
-    40%{transform:translate(2px,-1px);}
+    20%{transform:translate(-3px,1px);}
+    40%{transform:translate(3px,-1px);}
     60%{transform:translate(-1px,2px);}
-    80%{transform:translate(1px,-2px);}
+    80%{transform:translate(2px,-2px);}
     100%{transform:translate(0);}
 }
 
@@ -115,28 +115,39 @@ video{
 
 /* ================= BOOT ================= */
 
-#bootCanvas{
-    width:100vw;
-    height:100vh;
-    display:block;
-}
-
-/* corrupted popup */
-.corrupt{
+#bootScreen{
     position:fixed;
-    top:20%;
-    left:50%;
-    transform:translateX(-50%);
-    color:red;
-    font-size:28px;
-    opacity:0;
-    animation:pop 1.5s forwards;
+    inset:0;
+    background:black;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:9999;
 }
 
-@keyframes pop{
-    0%{opacity:0; transform:translateX(-50%) scale(0.5);}
-    50%{opacity:1;}
-    100%{opacity:0; transform:translateX(-50%) scale(1.2);}
+#logo{
+    width:60vw;
+    max-width:700px;
+    opacity:0;
+    animation:logoFade 9s forwards;
+}
+
+@keyframes logoFade{
+    0%{opacity:0;}
+    100%{opacity:1;}
+}
+
+.subtitle{
+    margin-top:20px;
+    opacity:0;
+    animation:subFade 9s forwards;
+}
+
+@keyframes subFade{
+    0%{opacity:0;}
+    40%{opacity:0;}
+    100%{opacity:1;}
 }
 
 </style>
@@ -148,16 +159,20 @@ video{
 
 <audio id="clickSfx" src="click.mp3"></audio>
 <audio id="bootSfx" src="startup.mp3"></audio>
-<audio id="unlockSfx" src="unlock.mp3"></audio>
 
+<!-- BOOT -->
 <div id="bootScreen">
-    <canvas id="bootCanvas"></canvas>
+    <img id="logo" src="EPI.png">
+    <div class="subtitle">
+        Epidemic Intelligence Service<br>
+        Epidemiology
+    </div>
 </div>
 
 <!-- HOME -->
 <div id="home" class="section active">
 
-<h1>CDC ARCHIVE TERMINAL</h1>
+<h1>Epidemic Intelligence Service</h1>
 
 <button onclick="nav('videos')">VIDEO FILES</button>
 <button onclick="nav('password')">AUDIO ARCHIVE</button>
@@ -239,88 +254,14 @@ video{
 
 <script>
 
-let bootStarted = false;
-
-/* ================= BOOT ================= */
-
-window.addEventListener("keydown", e=>{
-    if(e.key==="Enter" && !bootStarted){
-        bootStarted = true;
-        document.getElementById("bootSfx").play().catch(()=>{});
-        startBoot();
-    }
-});
-
-/* ================= BOOT SEQUENCE ================= */
-
-function startBoot(){
-
-    const canvas = document.getElementById("bootCanvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const cx = canvas.width/2;
-    const cy = canvas.height/2;
-
-    let start = Date.now();
-
-    function corruptPopup(){
-        let div = document.createElement("div");
-        div.className="corrupt";
-        div.innerText="FILE CORRUPTED // RECOVERING";
-        document.body.appendChild(div);
-        setTimeout(()=>div.remove(),1500);
-    }
-
-    setInterval(()=>{
-        if(!bootStarted) return;
-        corruptPopup();
-    },900);
-
-    function animate(){
-
-        let t = (Date.now()-start)/1000;
-
-        ctx.fillStyle="black";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-
-        /* HUGE FADE-IN CDC LOGO */
-        let fade = Math.min(1, t/9);
-
-        ctx.globalAlpha = fade;
-        ctx.fillStyle="white";
-        ctx.textAlign="center";
-        ctx.textBaseline="middle";
-
-        let size = canvas.width * 0.25;
-        ctx.font = `${size}px VT323`;
-
-        ctx.fillText("CDC", cx, cy);
-
-        ctx.globalAlpha = 1;
-
-        /* VHS noise flicker */
-        if(Math.random() < 0.08){
-            ctx.fillStyle="rgba(255,255,255,0.03)";
-            ctx.fillRect(0,Math.random()*canvas.height,canvas.width,2);
-        }
-
-        if(t<9){
-            requestAnimationFrame(animate);
-        }else{
-            document.getElementById("bootScreen").style.display="none";
-        }
-    }
-
-    animate();
-}
-
-/* ================= NAV ================= */
-
+/* TAB GLITCH EFFECT */
 function nav(id){
-    document.getElementById("clickSfx").play().catch(()=>{});
+
+    document.body.classList.add("glitch");
+
+    setTimeout(()=>{
+        document.body.classList.remove("glitch");
+    },250);
 
     document.querySelectorAll(".section")
     .forEach(s=>s.classList.remove("active"));
@@ -328,8 +269,7 @@ function nav(id){
     document.getElementById(id).classList.add("active");
 }
 
-/* ================= AUDIO ================= */
-
+/* AUDIO */
 let audio = document.getElementById("player");
 
 function playAudio(src,img){
@@ -339,8 +279,7 @@ function playAudio(src,img){
 }
 
 function audioPlayPause(){
-    if(audio.paused) audio.play();
-    else audio.pause();
+    audio.paused ? audio.play() : audio.pause();
 }
 
 function audioRewind(){
@@ -351,13 +290,11 @@ function audioForward(){
     audio.currentTime = Math.min(audio.duration, audio.currentTime+10);
 }
 
-/* ================= VIDEO ================= */
-
+/* VIDEO */
 let video = document.getElementById("videoPlayer");
 
 function videoPlayPause(){
-    if(video.paused) video.play();
-    else video.pause();
+    video.paused ? video.play() : video.pause();
 }
 
 function videoRewind(){
