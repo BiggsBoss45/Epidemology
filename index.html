@@ -237,6 +237,10 @@ input{
 <video controls src="video3.mp4"></video><br>
 <video controls src="video4.mp4"></video><br>
 <video controls src="video5.mp4"></video><br>
+<video controls src="video6.mp4"></video><br>
+<video controls src="video7.mp4"></video><br>
+<video controls src="video8.mp4"></video><br>
+<video controls src="video9.mp4"></video><br>
 
 <br>
 
@@ -255,6 +259,29 @@ window.addEventListener("load", () => {
     const logo = document.getElementById("logo");
     const sub = document.getElementById("subtitle");
     const prompt = document.getElementById("enterPrompt");
+
+    const bootAudio = document.getElementById("bootSfx");
+
+    let audioStarted = false;
+
+    function beginBoot(){
+
+        if(audioStarted) return;
+
+        audioStarted = true;
+
+        // startup sound DURING boot
+        bootAudio.volume = 0.8;
+
+        bootAudio.play().catch(()=>{});
+    }
+
+    // mobile interaction
+    document.addEventListener("click", beginBoot, { once:true });
+    document.addEventListener("touchstart", beginBoot, { once:true });
+
+    // keyboard interaction
+    document.addEventListener("keydown", beginBoot, { once:true });
 
     let start = Date.now();
 
@@ -283,21 +310,27 @@ function startSystem(){
     if(!bootDone) return;
 
     document.getElementById("bootScreen").style.display = "none";
-
-    const bootAudio = document.getElementById("bootSfx");
-
-    bootAudio.volume = 0.8;
-    bootAudio.play().catch(()=>{});
 }
 
 window.addEventListener("keydown",(e)=>{
-    if(e.key === "Enter"){
+
+    if(e.key === "Enter" && bootDone){
+
         startSystem();
     }
 });
 
-document.getElementById("bootScreen").addEventListener("click", startSystem);
-document.getElementById("bootScreen").addEventListener("touchstart", startSystem);
+document.getElementById("bootScreen")
+.addEventListener("click", ()=>{
+
+    if(bootDone) startSystem();
+});
+
+document.getElementById("bootScreen")
+.addEventListener("touchstart", ()=>{
+
+    if(bootDone) startSystem();
+});
 
 /* NAVIGATION */
 function nav(id){
