@@ -2,1277 +2,301 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CDC ARCHIVE TERMINAL</title>
 
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
 <style>
 
-/* =====================================================
-   BODY
-===================================================== */
+/* ================= BODY ================= */
 
 body{
-
     margin:0;
-
     background:black;
-
     color:white;
-
     font-family:'VT323', monospace;
-
-    overflow-x:hidden;
-
     text-align:center;
-
-    animation:flicker 5s infinite;
+    overflow-x:hidden;
+    animation:flicker 4s infinite;
 }
 
-/* =====================================================
-   CRT SCANLINES
-===================================================== */
-
+/* CRT */
 body::before{
-
     content:"";
-
     position:fixed;
-
-    top:0;
-    left:0;
-
     width:100%;
     height:100%;
-
-    background:
-    repeating-linear-gradient(
-
+    background:repeating-linear-gradient(
         to bottom,
-
         rgba(255,255,255,0.04),
-
         rgba(0,0,0,0.05) 2px
     );
-
     pointer-events:none;
-
-    z-index:9999;
 }
 
-/* =====================================================
-   STATIC
-===================================================== */
-
+/* STATIC */
 #static{
-
     position:fixed;
-
     width:100%;
     height:100%;
-
-    top:0;
-    left:0;
-
-    background:
-    url("https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif");
-
-    opacity:0.06;
-
+    background:url("https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif");
+    opacity:0.05;
     pointer-events:none;
-
-    z-index:9998;
-
-    mix-blend-mode:screen;
 }
 
-/* =====================================================
-   CRT CURVE
-===================================================== */
-
-#curve{
-
-    position:fixed;
-
-    width:100%;
-    height:100%;
-
-    top:0;
-    left:0;
-
-    box-shadow:
-    inset 0 0 120px rgba(255,255,255,0.15),
-    inset 0 0 250px rgba(0,0,0,0.9);
-
-    pointer-events:none;
-
-    z-index:9997;
-}
-
-/* =====================================================
-   FLICKER
-===================================================== */
-
-@keyframes flicker{
-
-    0%{opacity:1;}
-    96%{opacity:1;}
-    97%{opacity:.96;}
-    98%{opacity:1;}
-    99%{opacity:.97;}
-    100%{opacity:1;}
-}
-
-/* =====================================================
-   VHS GLITCH
-===================================================== */
-
-@keyframes vhs{
-
-    0%{transform:translateX(0px);}
-    20%{transform:translateX(1px);}
-    40%{transform:translateX(-1px);}
-    60%{transform:translateX(1px);}
-    80%{transform:translateX(-1px);}
-    100%{transform:translateX(0px);}
-}
-
-/* =====================================================
-   BOOT SCREEN
-===================================================== */
+/* ================= BOOT ================= */
 
 #bootScreen{
-
     position:fixed;
-
     width:100%;
     height:100%;
-
-    top:0;
-    left:0;
-
     background:black;
-
-    z-index:20000;
-
+    z-index:9999;
     display:flex;
-
+    flex-direction:column;
     justify-content:center;
     align-items:center;
-
-    flex-direction:column;
-
-    overflow:hidden;
 }
 
 #pressEnter{
-
-    font-size:46px;
-
+    font-size:42px;
     animation:flicker 1s infinite;
 }
 
-#cdcCanvas{
-
-    width:520px;
-    height:520px;
-
-    max-width:90vw;
-
-    display:none;
-
-    margin-bottom:20px;
-}
-
 #bootText{
-
-    font-size:36px;
-
-    letter-spacing:3px;
-
-    display:none;
-
     margin-top:20px;
+    font-size:28px;
 }
 
-/* =====================================================
-   SECTIONS
-===================================================== */
-
-.section{
-
+#cdcCanvas{
     display:none;
-
-    padding:20px;
 }
 
-.active{
-    display:block;
+/* ================= ANIMATIONS ================= */
+
+@keyframes flicker{
+    0%{opacity:1;}
+    97%{opacity:0.95;}
+    100%{opacity:1;}
 }
 
-/* =====================================================
-   TITLES
-===================================================== */
+/* ================= MAIN ================= */
 
-h1{
-
-    font-size:72px;
-
-    letter-spacing:6px;
-
-    text-shadow:
-    0 0 5px white,
-    0 0 10px white;
-}
-
-h2{
-    font-size:42px;
-}
-
-/* =====================================================
-   BUTTONS
-===================================================== */
+.section{display:none;padding:20px;}
+.active{display:block;}
 
 button{
-
-    font-family:'VT323', monospace;
-
+    font-family:'VT323';
     background:black;
-
     color:white;
-
     border:1px solid white;
-
-    padding:12px;
-
-    margin:10px;
-
-    width:340px;
-
-    max-width:90vw;
-
-    font-size:28px;
-
-    cursor:pointer;
-
-    transition:.2s;
-}
-
-button:hover{
-
-    background:white;
-
-    color:black;
-
-    box-shadow:
-    0 0 10px white;
-}
-
-/* =====================================================
-   INPUTS
-===================================================== */
-
-input{
-
-    font-family:'VT323', monospace;
-
-    background:black;
-
-    color:white;
-
-    border:1px solid white;
-
+    width:320px;
     padding:10px;
-
-    width:340px;
-
-    max-width:90vw;
-
-    font-size:28px;
-
-    text-align:center;
+    font-size:26px;
 }
 
-/* =====================================================
-   VIDEOS
-===================================================== */
+/* ================= VIDEO ================= */
 
 video{
-
     width:90%;
-
-    max-width:750px;
-
-    border:2px solid white;
-
-    filter:
-    grayscale(1)
-    contrast(1.2);
-
-    animation:vhs .05s infinite;
-
-    margin-bottom:30px;
-}
-
-/* =====================================================
-   FILE BOX
-===================================================== */
-
-.fileBox{
-
-    border:1px solid white;
-
-    width:90%;
-
-    max-width:850px;
-
-    margin:auto;
-
-    margin-bottom:40px;
-
-    padding:20px;
-
-    background:
-    rgba(255,255,255,0.03);
-}
-
-/* =====================================================
-   THUMBNAILS
-===================================================== */
-
-.thumb{
-
-    width:90%;
-
-    max-width:320px;
-
-    height:auto;
-
-    border:1px solid white;
-
-    filter:
-    grayscale(1)
-    contrast(1.2);
-
-    margin-bottom:10px;
-}
-
-/* =====================================================
-   IMAGE BOX
-===================================================== */
-
-.imageBox{
-
-    width:320px;
-    height:320px;
-
-    max-width:90vw;
-
-    margin:auto;
-
-    margin-top:20px;
-
-    border:1px solid white;
-
-    background-size:cover;
-    background-position:center;
-
-    filter:
-    grayscale(1)
-    contrast(1.2);
-}
-
-/* =====================================================
-   CASCADE
-===================================================== */
-
-@keyframes cascade{
-
-    from{
-
-        opacity:0;
-
-        transform:
-        translateY(-40px);
-    }
-
-    to{
-
-        opacity:1;
-
-        transform:
-        translateY(0);
-    }
-}
-
-.cascade{
-
-    animation:
-    cascade 1.5s forwards;
-}
-
-/* =====================================================
-   AUDIO BAR
-===================================================== */
-
-input[type=range]{
-
-    width:90%;
-
-    accent-color:white;
+    max-width:700px;
+    filter:grayscale(1) contrast(1.2);
 }
 
 </style>
-
 </head>
 
 <body>
 
-<!-- =====================================================
-     BOOT SCREEN
-===================================================== -->
-
-<div id="bootScreen">
-
-    <div id="pressEnter">
-        PRESS ENTER OR TAP SCREEN
-    </div>
-
-    <canvas id="cdcCanvas"></canvas>
-
-    <div id="bootText"></div>
-
-</div>
-
-<!-- =====================================================
-     CRT OVERLAYS
-===================================================== -->
-
 <div id="static"></div>
-<div id="curve"></div>
 
-<!-- =====================================================
-     SOUNDS
-===================================================== -->
-
-<audio id="clickSound" src="click.mp3"></audio>
-<audio id="unlockSound" src="unlock.mp3"></audio>
-<audio id="bootSound" src="startup.mp3"></audio>
-
-<!-- =====================================================
-     HOME
-===================================================== -->
-
-<div id="home" class="section active">
-
-    <h1>ARCHIVE TERMINAL</h1>
-
-    <button onclick="openReports()">
-        NEWS REPORTS
-    </button>
-
-    <button onclick="openPuzzle()">
-        LOCKED AUDIO LOGS
-    </button>
-
+<!-- BOOT -->
+<div id="bootScreen">
+    <div id="pressEnter">PRESS ENTER</div>
+    <canvas id="cdcCanvas" width="520" height="520"></canvas>
+    <div id="bootText"></div>
 </div>
 
-<!-- =====================================================
-     REPORTS
-===================================================== -->
+<!-- HOME -->
+<div id="home" class="section active">
+    <h1>CDC ARCHIVE</h1>
+    <button onclick="openReports()">NEWS FILES</button>
+    <button onclick="openLogs()">AUDIO LOGS</button>
+</div>
 
+<!-- REPORTS -->
 <div id="reports" class="section">
 
-    <h2>RECOVERED VIDEO FILES</h2>
+<h2>VIDEO FILES</h2>
 
-
-
-    <div class="fileBox">
-
-        <img src="thumb1.jpg"
-        class="thumb">
-
-        <h3>RECOVERED FILE 1</h3>
-
+    <div>
         <video controls>
-
-            <source src="video1.mp4"
-            type="video/mp4">
-
+            <source src="video1.mp4">
         </video>
-
     </div>
-
-
-
-    <div class="fileBox">
-
-        <img src="thumb2.jpg"
-        class="thumb">
-
-        <h3>RECOVERED FILE 2</h3>
-
+    
+    <div>
         <video controls>
-
-            <source src="video2.mp4"
-            type="video/mp4">
-
+            <source src="video2.mp4">
         </video>
-
     </div>
-
-
-
-    <div class="fileBox">
-
-        <img src="thumb3.jpg"
-        class="thumb">
-
-        <h3>RECOVERED FILE 3</h3>
-
+    
+    <div>
         <video controls>
-
-            <source src="video3.mp4"
-            type="video/mp4">
-
+            <source src="video3.mp4">
         </video>
-
     </div>
-
-
-
-    <div class="fileBox">
-
-        <img src="thumb4.jpg"
-        class="thumb">
-
-        <h3>RECOVERED FILE 4</h3>
-
+    
+    <div>
         <video controls>
-
-            <source src="video4.mp4"
-            type="video/mp4">
-
+            <source src="video4.mp4">
         </video>
-
     </div>
-
-
-
-    <div class="fileBox">
-
-        <img src="thumb5.jpg"
-        class="thumb">
-
-        <h3>RECOVERED FILE 5</h3>
-
+    
+    <div>
         <video controls>
-
-            <source src="video5.mp4"
-            type="video/mp4">
-
+            <source src="video5.mp4">
         </video>
-
     </div>
-
-
-
-    <div class="fileBox">
-
-        <img src="thumb6.jpg"
-        class="thumb">
-
-        <h3>RECOVERED FILE 6</h3>
-
+    
+    <div>
         <video controls>
-
-            <source src="video6.mp4"
-            type="video/mp4">
-
+            <source src="video6.mp4">
         </video>
-
     </div>
-
-
-
-    <div class="fileBox">
-
-        <img src="thumb7.jpg"
-        class="thumb">
-
-        <h3>RECOVERED FILE 7</h3>
-
+    
+    <div>
         <video controls>
-
-            <source src="video7.mp4"
-            type="video/mp4">
-
+            <source src="video7.mp4">
         </video>
-
     </div>
-
-
-
-    <div class="fileBox">
-
-        <img src="thumb8.jpg"
-        class="thumb">
-
-        <h3>RECOVERED FILE 8</h3>
-
+    
+    <div>
         <video controls>
-
-            <source src="video8.mp4"
-            type="video/mp4">
-
+            <source src="video8.mp4">
         </video>
-
     </div>
-
-
-
-    <div class="fileBox">
-
-        <img src="thumb9.jpg"
-        class="thumb">
-
-        <h3>RECOVERED FILE 9</h3>
-
+    
+    <div>
         <video controls>
-
-            <source src="video9.mp4"
-            type="video/mp4">
-
+            <source src="video9.mp4">
         </video>
-
     </div>
-
-
-
-    <button onclick="goHome()">
-        BACK
-    </button>
-
+    
+<button onclick="goHome()">BACK</button>
 </div>
 
-<!-- =====================================================
-     PASSWORD SCREEN
-===================================================== -->
+<!-- AUDIO -->
+<div id="logs" class="section">
+<h2>AUDIO LOGS</h2>
 
-<div id="puzzle" class="section">
+<button onclick="playAudio('audio1.mp3')">LOG 1</button>
+<button onclick="playAudio('audio2.mp3')">LOG 2</button>
+<button onclick="playAudio('audio3.mp3')">LOG 3</button>
+<button onclick="playAudio('audio4.mp3')">LOG 4</button>
+<button onclick="playAudio('audio5.mp3')">LOG 5</button>
 
-    <h2>ARCHIVE ACCESS</h2>
+<audio id="player"></audio>
 
-    <p>ENTER ALL FIVE IDENTITIES</p>
-
-    <input id="name1"
-    placeholder="Identity 1">
-
-    <br><br>
-
-    <input id="name2"
-    placeholder="Identity 2">
-
-    <br><br>
-
-    <input id="name3"
-    placeholder="Identity 3">
-
-    <br><br>
-
-    <input id="name4"
-    placeholder="Identity 4">
-
-    <br><br>
-
-    <input id="name5"
-    placeholder="Identity 5">
-
-    <br><br>
-
-    <button onclick="submitNames()">
-        VERIFY
-    </button>
-
-    <p id="status"></p>
-
-    <button onclick="goHome()">
-        BACK
-    </button>
-
-</div>
-
-<!-- =====================================================
-     ARCHIVE
-===================================================== -->
-
-<div id="archive" class="section">
-
-    <h2>AUDIO ARCHIVE</h2>
-
-    <button onclick="openLog('Sarah Mitchell')">
-        Sarah Mitchell
-    </button>
-
-    <button onclick="openLog('David Carter')">
-        David Carter
-    </button>
-
-    <button onclick="openLog('Marcus Reed')">
-        Marcus Reed
-    </button>
-
-    <button onclick="openLog('Olivia Hayes')">
-        Olivia Hayes
-    </button>
-
-    <button onclick="openLog('Daniel Brooks')">
-        Daniel Brooks
-    </button>
-
-    <br><br>
-
-    <button onclick="goHome()">
-        EXIT
-    </button>
-
-</div>
-
-<!-- =====================================================
-     AUDIO LOG PAGE
-===================================================== -->
-
-<div id="logPage" class="section">
-
-    <h2 id="logTitle"></h2>
-
-    <div id="imageBox"
-    class="imageBox"></div>
-
-    <br>
-
-    <audio id="player"></audio>
-
-    <button onclick="playPause()">
-        PLAY / PAUSE
-    </button>
-
-    <button onclick="rewind()">
-        -10s
-    </button>
-
-    <button onclick="forward()">
-        +10s
-    </button>
-
-    <br><br>
-
-    <input type="range"
-           id="scrub"
-           min="0"
-           max="100"
-           value="0"
-           oninput="seekAudio(this.value)">
-
-    <p id="time">0:00 / 0:00</p>
-
-    <button onclick="backArchive()">
-        BACK
-    </button>
-
+<br><br>
+<button onclick="goHome()">BACK</button>
 </div>
 
 <script>
 
-/* =====================================================
-   BOOT SEQUENCE
-===================================================== */
+/* ================= BOOT ================= */
 
-let started = false;
+let started=false;
 
-window.addEventListener("keydown", startInput);
-window.addEventListener("click", startInput);
-
-function startInput(e){
-
-    if(!started){
-
-        started = true;
-
-        startBootSequence();
+window.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter" && !started){
+        started=true;
+        boot();
     }
-}
+});
 
-function startBootSequence(){
+function boot(){
 
-    document.getElementById(
-        "pressEnter"
-    ).style.display = "none";
+    document.getElementById("pressEnter").style.display="none";
+    document.getElementById("cdcCanvas").style.display="block";
 
-    document.getElementById(
-        "cdcCanvas"
-    ).style.display = "block";
+    const c=document.getElementById("cdcCanvas");
+    const ctx=c.getContext("2d");
 
-    document.getElementById(
-        "bootText"
-    ).style.display = "block";
+    let particles=[];
 
-    document.getElementById(
-        "bootSound"
-    ).play();
-
-    const canvas =
-    document.getElementById(
-        "cdcCanvas"
-    );
-
-    const ctx =
-    canvas.getContext("2d");
-
-    canvas.width = 520;
-    canvas.height = 520;
-
-    let particles = [];
-
-    /* MORE PARTICLES */
-
-    for(let i=0;i<3000;i++){
-
+    for(let i=0;i<1800;i++){
         particles.push({
-
             x:Math.random()*520,
             y:Math.random()*520,
-
-            tx:260 +
-            Math.cos(i*0.1)*170,
-
-            ty:260 +
-            Math.sin(i*0.1)*170,
-
-            size:
-            Math.random()*2+1
+            tx:260+Math.cos(i)*140,
+            ty:260+Math.sin(i)*140
         });
     }
 
-    let start = Date.now();
+    let start=Date.now();
 
     function animate(){
 
-        ctx.fillStyle =
-        "rgba(0,0,0,0.2)";
+        ctx.fillStyle="black";
+        ctx.fillRect(0,0,520,520);
 
-        ctx.fillRect(
-            0,
-            0,
-            520,
-            520
-        );
-
-        ctx.strokeStyle =
-        "white";
-
-        ctx.lineWidth = 4;
-
+        ctx.strokeStyle="white";
         ctx.beginPath();
-
-        ctx.arc(
-            260,
-            260,
-            170,
-            0,
-            Math.PI*2
-        );
-
+        ctx.arc(260,260,140,0,Math.PI*2);
         ctx.stroke();
 
-        ctx.font =
-        "58px VT323";
+        ctx.font="50px VT323";
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
 
-        ctx.fillStyle =
-        "white";
-
-        ctx.fillText(
-            "CDC",
-            205,
-            280
-        );
+        ctx.fillText("CDC",260,260);
 
         particles.forEach(p=>{
-
-            p.x +=
-            (p.tx-p.x)*0.015;
-
-            p.y +=
-            (p.ty-p.y)*0.015;
-
-            ctx.fillRect(
-                p.x,
-                p.y,
-                p.size,
-                p.size
-            );
+            p.x+=(p.tx-p.x)*0.02;
+            p.y+=(p.ty-p.y)*0.02;
+            ctx.fillRect(p.x,p.y,2,2);
         });
 
-        let elapsed =
-        (Date.now()-start)/1000;
+        let t=(Date.now()-start)/1000;
 
-        /* CHANGING BOOT TEXT */
-
-        if(elapsed < 4){
-
-            document.getElementById(
-                "bootText"
-            ).innerText =
-            "CONNECTING TO CDC SERVERS";
-
-        }else if(elapsed < 8){
-
-            document.getElementById(
-                "bootText"
-            ).innerText =
-            "RECOVERING ARCHIVE FILES";
-
-        }else if(elapsed < 12){
-
-            document.getElementById(
-                "bootText"
-            ).innerText =
-            "DECRYPTING CLASSIFIED DATA";
-
+        if(t<3){
+            document.getElementById("bootText").innerText="CONNECTING...";
+        }else if(t<6){
+            document.getElementById("bootText").innerText="LOADING ARCHIVE...";
         }else{
-
-            document.getElementById(
-                "bootText"
-            ).innerText =
-            "ACCESS GRANTED";
+            document.getElementById("bootText").innerText="ACCESS GRANTED";
         }
 
-        /* LONGER BOOT */
-
-        if(elapsed < 15){
-
-            requestAnimationFrame(
-                animate
-            );
-
+        if(t<9){
+            requestAnimationFrame(animate);
         }else{
-
-            document.getElementById(
-                "bootScreen"
-            ).style.display =
-            "none";
+            document.getElementById("bootScreen").style.display="none";
         }
     }
 
     animate();
 }
 
-/* =====================================================
-   UI SOUND
-===================================================== */
-
-function uiClick(){
-
-    document.getElementById(
-        "clickSound"
-    ).play();
-}
-
-/* =====================================================
-   SCREEN CONTROL
-===================================================== */
+/* ================= NAV ================= */
 
 function show(id){
-
-    uiClick();
-
-    document.querySelectorAll(
-        ".section"
-    ).forEach(s=>
-
-        s.classList.remove(
-            "active"
-        )
-    );
-
-    document.getElementById(id)
-    .classList.add("active");
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
 }
 
-function goHome(){
-    show("home");
-}
-
-function openReports(){
-    show("reports");
-}
-
-function openPuzzle(){
-    show("puzzle");
-}
-
-/* =====================================================
-   PASSWORD SYSTEM
-===================================================== */
-
-const correctNames = [
-
-    "Sarah Mitchell",
-    "David Carter",
-    "Marcus Reed",
-    "Olivia Hayes",
-    "Daniel Brooks"
-];
-
-function submitNames(){
-
-    uiClick();
-
-    let inputs = [
-
-        document.getElementById(
-            "name1"
-        ).value.trim(),
-
-        document.getElementById(
-            "name2"
-        ).value.trim(),
-
-        document.getElementById(
-            "name3"
-        ).value.trim(),
-
-        document.getElementById(
-            "name4"
-        ).value.trim(),
-
-        document.getElementById(
-            "name5"
-        ).value.trim()
-    ];
-
-    let unique =
-    [...new Set(inputs)];
-
-    let allCorrect =
-    unique.every(
-        n => correctNames.includes(n)
-    );
-
-    if(allCorrect &&
-    unique.length === 5){
-
-        document.getElementById(
-            "status"
-        ).innerText =
-        "ACCESS GRANTED";
-
-        document.getElementById(
-            "unlockSound"
-        ).play();
-
-        setTimeout(()=>{
-
-            show("archive");
-
-        },700);
-
-    }else{
-
-        document.getElementById(
-            "status"
-        ).innerText =
-        "ACCESS DENIED";
-    }
-}
-
-/* =====================================================
-   AUDIO FILES
-===================================================== */
-
-const AUDIO = {
-
-    "Sarah Mitchell":
-    "audio1.mp3",
-
-    "David Carter":
-    "audio2.mp3",
-
-    "Marcus Reed":
-    "audio3.mp3",
-
-    "Olivia Hayes":
-    "audio4.mp3",
-
-    "Daniel Brooks":
-    "audio5.mp3"
-};
-
-/* =====================================================
-   IMAGES
-===================================================== */
-
-const IMAGES = {
-
-    "Sarah Mitchell":
-    "img1.jpg",
-
-    "David Carter":
-    "img2.jpg",
-
-    "Marcus Reed":
-    "img3.jpg",
-
-    "Olivia Hayes":
-    "img4.jpg",
-
-    "Daniel Brooks":
-    "img5.jpg"
-};
-
-let player =
-document.getElementById(
-    "player"
-);
-
-/* =====================================================
-   OPEN LOG
-===================================================== */
-
-function openLog(name){
-
-    show("logPage");
-
-    document.getElementById(
-        "logTitle"
-    ).innerText = name;
-
-    player.src = AUDIO[name];
-
-    player.load();
-
-    let box =
-    document.getElementById(
-        "imageBox"
-    );
-
-    box.style.opacity = 0;
-
-    setTimeout(()=>{
-
-        box.style.backgroundImage =
-        "url('" +
-        IMAGES[name] +
-        "')";
-
-        box.classList.add(
-            "cascade"
-        );
-
-        box.style.opacity = 1;
-
-    },200);
-
-    player.ontimeupdate =
-    updateUI;
-
-    player.onloadedmetadata =
-    updateUI;
-}
-
-function playPause(){
-
-    uiClick();
-
-    if(player.paused){
-
-        player.play();
-
-    }else{
-
-        player.pause();
-    }
-}
-
-function rewind(){
-
-    player.currentTime =
-
-    Math.max(
-        0,
-        player.currentTime - 10
-    );
-}
-
-function forward(){
-
-    player.currentTime =
-
-    Math.min(
-        player.duration,
-        player.currentTime + 10
-    );
-}
-
-function seekAudio(v){
-
-    player.currentTime =
-
-    (v/100) *
-    player.duration;
-}
-
-function updateUI(){
-
-    if(!player.duration)
-    return;
-
-    document.getElementById(
-        "scrub"
-    ).value =
-
-    (player.currentTime /
-    player.duration) * 100;
-
-    document.getElementById(
-        "time"
-    ).innerText =
-
-    format(
-        player.currentTime
-    )
-
-    + " / " +
-
-    format(
-        player.duration
-    );
-}
-
-function format(t){
-
-    let m =
-    Math.floor(t/60);
-
-    let s =
-    Math.floor(t%60);
-
-    return m + ":" +
-
-    (s<10 ?
-        "0"+s : s
-    );
-}
-
-function backArchive(){
-
-    show("archive");
+function openReports(){show("reports")}
+function openLogs(){show("logs")}
+function goHome(){show("home")}
+
+/* ================= AUDIO ================= */
+
+function playAudio(src){
+    const p=document.getElementById("player");
+    p.src=src;
+    p.play();
 }
 
 </script>
