@@ -4,13 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CDC VHS ARCHIVE SYSTEM</title>
+<title>CDC ARCHIVE TERMINAL</title>
 
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
 <style>
-
-/* ================= BASE ================= */
 
 body{
     margin:0;
@@ -18,11 +16,9 @@ body{
     color:white;
     font-family:'VT323', monospace;
     text-align:center;
-    overflow-x:hidden;
-    animation:flicker 3s infinite;
 }
 
-/* CRT SCANLINES */
+/* CRT */
 body::before{
     content:"";
     position:fixed;
@@ -36,59 +32,6 @@ body::before{
     pointer-events:none;
 }
 
-/* STATIC */
-#static{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:url("https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif");
-    opacity:0.05;
-    pointer-events:none;
-}
-
-/* FLICKER */
-@keyframes flicker{
-    0%{opacity:1;}
-    97%{opacity:0.95;}
-    100%{opacity:1;}
-}
-
-/* VHS GLITCH */
-@keyframes vhs{
-    0%{transform:translate(0,0);}
-    25%{transform:translate(2px,-1px);}
-    50%{transform:translate(-2px,1px);}
-    75%{transform:translate(1px,2px);}
-    100%{transform:translate(0,0);}
-}
-
-.vhs{
-    animation:vhs .12s infinite;
-}
-
-/* BOOT SCREEN */
-#bootScreen{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:black;
-    z-index:99999;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-}
-
-#pressEnter{
-    font-size:44px;
-    animation:flicker 1s infinite;
-}
-
-#bootText{
-    margin-top:20px;
-    font-size:28px;
-}
-
 /* SECTIONS */
 .section{display:none;padding:20px;}
 .active{display:block;}
@@ -99,16 +42,9 @@ button{
     background:black;
     color:white;
     border:1px solid white;
-    width:320px;
+    width:300px;
     padding:10px;
-    font-size:26px;
-}
-
-/* VIDEO */
-video{
-    width:90%;
-    max-width:720px;
-    filter:grayscale(1) contrast(1.4);
+    font-size:24px;
 }
 
 /* IMAGE */
@@ -121,166 +57,58 @@ video{
     background-position:center;
 }
 
+/* VIDEO */
+video{
+    width:90%;
+    max-width:700px;
+    filter:grayscale(1) contrast(1.4);
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="static"></div>
+<!-- AUDIO FILES (EXPLICIT) -->
+<audio id="clickSfx" src="click.mp3"></audio>
+<audio id="bootSfx" src="startup.mp3"></audio>
+<audio id="unlockSfx" src="unlock.mp3"></audio>
 
-<!-- BOOT -->
+<!-- BOOT SCREEN -->
 <div id="bootScreen">
-    <div id="pressEnter">PRESS ENTER</div>
-    <canvas id="cdcCanvas" width="520" height="520"></canvas>
-    <div id="bootText"></div>
+    <h1>PRESS ENTER</h1>
 </div>
 
 <!-- HOME -->
 <div id="home" class="section active">
+<h1>CDC ARCHIVE</h1>
 
-<h1>CDC ARCHIVE SYSTEM</h1>
-
-<button onclick="show('videos')">VIDEO FILES</button>
-<button onclick="show('audio')">AUDIO LOGS</button>
+<button onclick="nav('videos')">VIDEO FILES</button>
+<button onclick="nav('password')">AUDIO ARCHIVE</button>
 
 </div>
 
-<!-- VIDEOS -->
-<div id="videos" class="section">
-<h2>RECOVERED VIDEO FILES</h2>
+<!-- PASSWORD -->
+<div id="password" class="section">
 
-    <div>
-        <video id="vid1" class="vhs" controls>
-            <source src="video1.mp4" type="video/mp4">
-        </video>
+<h2>ENTER 5 IDENTITIES</h2>
 
-        <br>
+<input id="n1"><br>
+<input id="n2"><br>
+<input id="n3"><br>
+<input id="n4"><br>
+<input id="n5"><br>
 
-        <button onclick="rewind('vid1')">⏪ REWIND</button>
-        <button onclick="playVid('vid1')">▶ PLAY</button>
-        <button onclick="ff('vid1')">⏩ FAST</button>
+<br>
 
-        <br><br>
-    </div>
-    
-    <div>
-        <video id="vid2" class="vhs" controls>
-            <source src="video2.mp4" type="video/mp4">
-        </video>
+<button onclick="check()">UNLOCK</button>
+<p id="status"></p>
 
-        <br>
-
-        <button onclick="rewind('vid2')">⏪ REWIND</button>
-        <button onclick="playVid('vid2')">▶ PLAY</button>
-        <button onclick="ff('vid2')">⏩ FAST</button>
-
-        <br><br>
-    </div>
-    
-    <div>
-        <video id="vid3" class="vhs" controls>
-            <source src="video3.mp4" type="video/mp4">
-        </video>
-
-        <br>
-
-        <button onclick="rewind('vid3')">⏪ REWIND</button>
-        <button onclick="playVid('vid3')">▶ PLAY</button>
-        <button onclick="ff('vid3')">⏩ FAST</button>
-
-        <br><br>
-    </div>
-    
-    <div>
-        <video id="vid4" class="vhs" controls>
-            <source src="video4.mp4" type="video/mp4">
-        </video>
-
-        <br>
-
-        <button onclick="rewind('vid4')">⏪ REWIND</button>
-        <button onclick="playVid('vid4')">▶ PLAY</button>
-        <button onclick="ff('vid4')">⏩ FAST</button>
-
-        <br><br>
-    </div>
-    
-    <div>
-        <video id="vid5" class="vhs" controls>
-            <source src="video5.mp4" type="video/mp4">
-        </video>
-
-        <br>
-
-        <button onclick="rewind('vid5')">⏪ REWIND</button>
-        <button onclick="playVid('vid5')">▶ PLAY</button>
-        <button onclick="ff('vid5')">⏩ FAST</button>
-
-        <br><br>
-    </div>
-    
-    <div>
-        <video id="vid6" class="vhs" controls>
-            <source src="video6.mp4" type="video/mp4">
-        </video>
-
-        <br>
-
-        <button onclick="rewind('vid6')">⏪ REWIND</button>
-        <button onclick="playVid('vid6')">▶ PLAY</button>
-        <button onclick="ff('vid6')">⏩ FAST</button>
-
-        <br><br>
-    </div>
-    
-    <div>
-        <video id="vid7" class="vhs" controls>
-            <source src="video7.mp4" type="video/mp4">
-        </video>
-
-        <br>
-
-        <button onclick="rewind('vid7')">⏪ REWIND</button>
-        <button onclick="playVid('vid7')">▶ PLAY</button>
-        <button onclick="ff('vid7')">⏩ FAST</button>
-
-        <br><br>
-    </div>
-    
-    <div>
-        <video id="vid8" class="vhs" controls>
-            <source src="video8.mp4" type="video/mp4">
-        </video>
-
-        <br>
-
-        <button onclick="rewind('vid8')">⏪ REWIND</button>
-        <button onclick="playVid('vid8')">▶ PLAY</button>
-        <button onclick="ff('vid8')">⏩ FAST</button>
-
-        <br><br>
-    </div>
-    
-    <div>
-        <video id="vid9" class="vhs" controls>
-            <source src="video9.mp4" type="video/mp4">
-        </video>
-
-        <br>
-
-        <button onclick="rewind('vid9')">⏪ REWIND</button>
-        <button onclick="playVid('vid9')">▶ PLAY</button>
-        <button onclick="ff('vid9')">⏩ FAST</button>
-
-        <br><br>
-    </div>
-    
-
-<button onclick="show('home')">BACK</button>
 </div>
 
 <!-- AUDIO -->
 <div id="audio" class="section">
+
 <h2>AUDIO LOGS</h2>
 
 <button onclick="playAudio('audio1.mp3','img1.jpg')">LOG 1</button>
@@ -291,19 +119,26 @@ video{
 
 <audio id="player"></audio>
 
-<br><br>
-
 <div id="imgBox" class="imgBox"></div>
 
-<br>
-
-<button onclick="show('home')">BACK</button>
 </div>
 
-<!-- SFX -->
-<audio id="clickSound" src="click.mp3"></audio>
-<audio id="unlockSound" src="unlock.mp3"></audio>
-<audio id="bootSound" src="startup.mp3"></audio>
+<!-- VIDEOS (EXPLICITLY LISTED 1–9) -->
+<div id="videos" class="section">
+
+<h2>VIDEO FILES</h2>
+
+<video controls src="video1.mp4"></video><br>
+<video controls src="video2.mp4"></video><br>
+<video controls src="video3.mp4"></video><br>
+<video controls src="video4.mp4"></video><br>
+<video controls src="video5.mp4"></video><br>
+<video controls src="video6.mp4"></video><br>
+<video controls src="video7.mp4"></video><br>
+<video controls src="video8.mp4"></video><br>
+<video controls src="video9.mp4"></video><br>
+
+</div>
 
 <script>
 
@@ -314,88 +149,48 @@ let started=false;
 window.addEventListener("keydown",e=>{
     if(e.key==="Enter"&&!started){
         started=true;
-        boot();
+
+        document.getElementById("bootSfx").play().catch(()=>{});
+
+        setTimeout(()=>{
+            document.getElementById("bootScreen").style.display="none";
+        },2500);
     }
 });
 
-function boot(){
+/* ================= NAV ================= */
 
-    document.getElementById("pressEnter").style.display="none";
-    document.getElementById("cdcCanvas").style.display="block";
+function nav(id){
+    document.getElementById("clickSfx").play().catch(()=>{});
 
-    const c=document.getElementById("cdcCanvas");
-    const ctx=c.getContext("2d");
+    document.querySelectorAll(".section")
+    .forEach(s=>s.classList.remove("active"));
 
-    let particles=[];
+    document.getElementById(id).classList.add("active");
+}
 
-    for(let i=0;i<2000;i++){
-        particles.push({
-            x:Math.random()*520,
-            y:Math.random()*520,
-            tx:260+Math.cos(i)*150,
-            ty:260+Math.sin(i)*150
-        });
+/* ================= PASSWORD ================= */
+
+const names=["Sarah","David","Marcus","Olivia","Daniel"];
+
+function check(){
+
+    let input=[
+        n1.value,n2.value,n3.value,n4.value,n5.value
+    ];
+
+    let ok = names.every(n=>input.includes(n));
+
+    if(ok){
+        document.getElementById("unlockSfx").play().catch(()=>{});
+        document.getElementById("status").innerText="ACCESS GRANTED";
+        setTimeout(()=>nav("audio"),800);
+    }else{
+        document.getElementById("status").innerText="DENIED";
     }
-
-    let start=Date.now();
-
-    function animate(){
-
-        ctx.fillStyle="black";
-        ctx.fillRect(0,0,520,520);
-
-        ctx.strokeStyle="white";
-        ctx.beginPath();
-        ctx.arc(260,260,150,0,Math.PI*2);
-        ctx.stroke();
-
-        ctx.font="52px VT323";
-        ctx.textAlign="center";
-        ctx.textBaseline="middle";
-        ctx.fillText("CDC",260,260);
-
-        particles.forEach(p=>{
-            p.x+=(p.tx-p.x)*0.02;
-            p.y+=(p.ty-p.y)*0.02;
-            ctx.fillRect(p.x,p.y,2,2);
-        });
-
-        let t=(Date.now()-start)/1000;
-
-        document.getElementById("bootText").innerText =
-        t<3 ? "CONNECTING..."
-        : t<6 ? "RECOVERING FILES..."
-        : "DECRYPTING DATA...";
-
-        if(t<9){
-            requestAnimationFrame(animate);
-        }else{
-            document.getElementById("bootScreen").style.display="none";
-        }
-    }
-
-    animate();
 }
 
-/* ================= VIDEO CONTROL ================= */
-
-function playVid(id){
-    document.getElementById(id).play();
-}
-
-function rewind(id){
-    let v=document.getElementById(id);
-    v.playbackRate=-1;
-    setTimeout(()=>v.playbackRate=1,1200);
-}
-
-function ff(id){
-    let v=document.getElementById(id);
-    v.playbackRate=3;
-    setTimeout(()=>v.playbackRate=1,1200);
-}
-
-/* ================= AUDIO + IMAGE ================= */
+/* ================= AUDIO ================= */
 
 function playAudio(src,img){
 
@@ -403,15 +198,8 @@ function playAudio(src,img){
     p.src=src;
     p.play();
 
-    document.getElementById("imgBox").style.backgroundImage =
+    document.getElementById("imgBox").style.backgroundImage=
     `url(${img})`;
-}
-
-/* ================= NAV ================= */
-
-function show(id){
-    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
 }
 
 </script>
