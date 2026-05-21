@@ -103,21 +103,18 @@ video{
     z-index:9999;
 }
 
-/* SMALL LOGO */
 #logo{
     width:30vw;
     max-width:300px;
     opacity:0;
 }
 
-/* BIG SUBTITLE */
 #subtitle{
     margin-top:20px;
     font-size:40px;
     opacity:0;
 }
 
-/* PRESS ENTER */
 #enterPrompt{
     margin-top:30px;
     font-size:26px;
@@ -191,7 +188,6 @@ video{
 <div id="imgBox" class="imgBox"></div>
 
 <br>
-
 <button onclick="audioPlayPause()">PLAY/PAUSE</button>
 <button onclick="audioRewind()">-10s</button>
 <button onclick="audioForward()">+10s</button>
@@ -254,14 +250,14 @@ window.addEventListener("load", () => {
     animate();
 });
 
-/* PRESS ENTER AFTER BOOT */
+/* ENTER TO EXIT BOOT */
 window.addEventListener("keydown", (e)=>{
     if(e.key === "Enter" && bootDone){
         document.getElementById("bootScreen").style.display = "none";
     }
 });
 
-/* NAV GLITCH */
+/* NAV */
 function nav(id){
     if(!bootDone) return;
 
@@ -274,6 +270,30 @@ function nav(id){
     document.getElementById(id).classList.add("active");
 
     document.getElementById("clickSfx").play().catch(()=>{});
+});
+
+/* PASSWORD SYSTEM */
+const names = ["Sarah","David","Marcus","Olivia","Daniel"];
+
+function check(){
+
+    let input = [
+        n1.value.trim(),
+        n2.value.trim(),
+        n3.value.trim(),
+        n4.value.trim(),
+        n5.value.trim()
+    ];
+
+    let ok = names.every(n => input.includes(n));
+
+    if(ok){
+        document.getElementById("unlockSfx").play().catch(()=>{});
+        document.getElementById("status").innerText = "ACCESS GRANTED";
+        setTimeout(()=>nav("audio"),800);
+    } else {
+        document.getElementById("status").innerText = "ACCESS DENIED";
+    }
 }
 
 /* AUDIO */
