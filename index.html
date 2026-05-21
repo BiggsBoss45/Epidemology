@@ -6,6 +6,7 @@
 
 <title>CDC ARCHIVE TERMINAL</title>
 
+<!-- FIXED FONT LINK -->
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
 <style>
@@ -22,12 +23,11 @@ body{
     animation:flicker 3s infinite;
 }
 
-/* ================= CRT OVERLAY (FIXED FULL SCREEN) ================= */
+/* ================= CRT (FIXED FULL SCREEN) ================= */
 
 #crt{
     position:fixed;
-    top:0;
-    left:0;
+    inset:0;
     width:100vw;
     height:100vh;
     pointer-events:none;
@@ -35,20 +35,23 @@ body{
 
     background: repeating-linear-gradient(
         to bottom,
-        rgba(255,255,255,0.05),
+        rgba(255,255,255,0.04),
         rgba(0,0,0,0.05) 2px
     );
 }
 
-#crt::after{
+/* vignette (FIXED SAFE LAYER) */
+body::after{
     content:"";
-    position:absolute;
-    width:100%;
-    height:100%;
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9997;
+
     background: radial-gradient(
         circle at center,
-        rgba(0,0,0,0) 55%,
-        rgba(0,0,0,0.7) 100%
+        rgba(0,0,0,0) 60%,
+        rgba(0,0,0,0.75) 100%
     );
 }
 
@@ -97,19 +100,12 @@ video{
     filter:grayscale(1) contrast(1.4);
 }
 
-/* ================= BOOT ================= */
+/* ================= BOOT CANVAS ================= */
 
-#bootScreen{
-    position:fixed;
-    top:0;left:0;
-    width:100%;
-    height:100%;
-    background:black;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    z-index:9999;
+#bootCanvas{
+    width:100vw;
+    height:100vh;
+    display:block;
 }
 
 </style>
@@ -117,7 +113,7 @@ video{
 
 <body>
 
-<!-- CRT LAYER -->
+<!-- CRT -->
 <div id="crt"></div>
 
 <!-- AUDIO -->
@@ -127,7 +123,7 @@ video{
 
 <!-- BOOT -->
 <div id="bootScreen">
-    <h1 id="bootText">PRESS ENTER</h1>
+    <canvas id="bootCanvas"></canvas>
 </div>
 
 <!-- HOME -->
@@ -207,40 +203,73 @@ video{
 
 let bootStarted = false;
 
-/* ================= BOOT (9s + SOUND) ================= */
+/* ================= BOOT TRIGGER ================= */
 
 window.addEventListener("keydown", e => {
     if(e.key === "Enter" && !bootStarted){
-
         bootStarted = true;
 
         document.getElementById("bootSfx").play().catch(()=>{});
 
-        let t0 = Date.now();
-
-        function bootLoop(){
-            let t = (Date.now() - t0) / 1000;
-
-            if(t < 3){
-                bootText.innerText = "INITIALIZING...";
-            }
-            else if(t < 6){
-                bootText.innerText = "RECOVERING FILES...";
-            }
-            else if(t < 9){
-                bootText.innerText = "DECRYPTING ARCHIVE...";
-            }
-
-            if(t < 9){
-                requestAnimationFrame(bootLoop);
-            }else{
-                document.getElementById("bootScreen").style.display="none";
-            }
-        }
-
-        bootLoop();
+        startBoot();
     }
 });
+
+/* ================= CDC PARTICLE BOOT ================= */
+
+function startBoot(){
+
+    const canvas = document.getElementById("bootCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const cx = canvas.width/2;
+    const cy = canvas.height/2;
+
+    let particles = [];
+
+    for(let i=0;i<3000;i++){
+        particles.push({
+            x:Math.random()*canvas.width,
+            y:Math.random()*canvas.height,
+            tx:cx,
+            ty:cy
+        });
+    }
+
+    let start = Date.now();
+
+    function animate(){
+
+        ctx.fillStyle="black";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        let t=(Date.now()-start)/1000;
+
+        ctx.fillStyle="rgba(255,255,255,0.08)";
+        ctx.font="140px VT323";
+        ctx.textAlign="center";
+        ctx.fillText("CDC",cx,cy);
+
+        particles.forEach(p=>{
+            p.x += (p.tx-p.x)*0.03;
+            p.y += (p.ty-p.y)*0.03;
+
+            ctx.fillStyle="white";
+            ctx.fillRect(p.x,p.y,2,2);
+        });
+
+        if(t<9){
+            requestAnimationFrame(animate);
+        }else{
+            document.getElementById("bootScreen").style.display="none";
+        }
+    }
+
+    animate();
+}
 
 /* ================= NAV ================= */
 
@@ -248,18 +277,18 @@ function nav(id){
     document.getElementById("clickSfx").play().catch(()=>{});
 
     document.querySelectorAll(".section")
-    .forEach(s => s.classList.remove("active"));
+    .forEach(s=>s.classList.remove("active"));
 
     document.getElementById(id).classList.add("active");
 }
 
 /* ================= PASSWORD ================= */
 
-const names = ["Sarah","David","Marcus","Olivia","Daniel"];
+const names=["Sarah","David","Marcus","Olivia","Daniel"];
 
 function check(){
 
-    let input = [
+    let input=[
         n1.value.trim(),
         n2.value.trim(),
         n3.value.trim(),
@@ -267,7 +296,7 @@ function check(){
         n5.value.trim()
     ];
 
-    let ok = names.every(n => input.includes(n));
+    let ok = names.every(n=>input.includes(n));
 
     if(ok){
         document.getElementById("unlockSfx").play().catch(()=>{});
@@ -278,7 +307,7 @@ function check(){
     }
 }
 
-/* ================= AUDIO + IMAGE ================= */
+/* ================= AUDIO ================= */
 
 function playAudio(src,img){
 
@@ -286,7 +315,7 @@ function playAudio(src,img){
     p.src=src;
     p.play();
 
-    document.getElementById("imgBox").style.backgroundImage =
+    document.getElementById("imgBox").style.backgroundImage=
     `url(${img})`;
 }
 
