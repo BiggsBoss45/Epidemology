@@ -56,6 +56,7 @@ button{
     padding:10px;
     font-size:24px;
     margin:8px;
+    cursor:pointer;
 }
 
 /* BOOT */
@@ -102,6 +103,7 @@ video{
     width:90%;
     max-width:700px;
     filter:grayscale(1) contrast(1.4);
+    margin-bottom:20px;
 }
 
 input{
@@ -116,6 +118,29 @@ input{
     padding:5px;
 }
 
+/* DOCUMENTS */
+.docBox{
+    width:90%;
+    max-width:900px;
+    margin:auto;
+    border:1px solid white;
+    padding:20px;
+    min-height:400px;
+    text-align:left;
+    overflow-y:auto;
+}
+
+.hiddenLink{
+    position:absolute;
+    width:40px;
+    height:40px;
+    right:20px;
+    bottom:20px;
+    opacity:0;
+    cursor:pointer;
+}
+
+/* MOBILE */
 @media(max-width:600px){
 
     #subtitle{
@@ -176,6 +201,7 @@ input{
 <button onclick="nav('password')">SECURITY ACCESS</button>
 <button onclick="nav('audio')">AUDIO ARCHIVE</button>
 <button onclick="nav('videos')">VIDEO FILES</button>
+<button onclick="nav('docPassword')">DOCUMENT ARCHIVE</button>
 
 </div>
 
@@ -195,6 +221,115 @@ input{
 <p id="status"></p>
 
 <button onclick="nav('home')">BACK</button>
+
+</div>
+
+<!-- DOCUMENT PASSWORD -->
+<div id="docPassword" class="section">
+
+<h2>DOCUMENT ACCESS REQUIRED</h2>
+
+<input id="docPass" placeholder="ENTER LOCATION"><br>
+
+<button onclick="checkDocs()">UNLOCK DOCUMENTS</button>
+
+<p id="docStatus"></p>
+
+<button onclick="nav('home')">BACK</button>
+
+</div>
+
+<!-- DOCUMENTS -->
+<div id="documents" class="section">
+
+<h2>DOCUMENT ARCHIVE</h2>
+
+<button onclick="openDoc('littleEagles')">Little Eagles Little League</button>
+<button onclick="openDoc('redCross')">The Red Cross</button>
+<button onclick="openDoc('soar')">The SOAR Foundation</button>
+<button onclick="openDoc('ssd')">The Salado School District (SSD)</button>
+<button onclick="openDoc('anchorage')">Anchorage Meat Market</button>
+
+<br><br>
+
+<!-- LITTLE EAGLES -->
+<div id="littleEagles" class="docBox" style="display:none;">
+    <h2>Little Eagles Little League</h2>
+    <iframe src="little_eagles.txt"
+    width="100%"
+    height="400"
+    style="background:black;color:white;border:1px solid white;">
+    </iframe>
+</div>
+
+<!-- RED CROSS -->
+<div id="redCross" class="docBox" style="display:none;">
+    <h2>The Red Cross</h2>
+    <iframe src="red_cross.txt"
+    width="100%"
+    height="400"
+    style="background:black;color:white;border:1px solid white;">
+    </iframe>
+</div>
+
+<!-- SOAR -->
+<div id="soar" class="docBox" style="display:none;">
+    <h2>The SOAR Foundation</h2>
+    <iframe src="soar_foundation.txt"
+    width="100%"
+    height="400"
+    style="background:black;color:white;border:1px solid white;">
+    </iframe>
+</div>
+
+<!-- SSD -->
+<div id="ssd" class="docBox" style="display:none;">
+    <h2>The Salado School District</h2>
+    <iframe src="ssd.txt"
+    width="100%"
+    height="400"
+    style="background:black;color:white;border:1px solid white;">
+    </iframe>
+</div>
+
+<!-- ANCHORAGE -->
+<div id="anchorage" class="docBox" style="display:none; position:relative;">
+    <h2>Anchorage Meat Market</h2>
+
+    <iframe src="anchorage_meat_market.txt"
+    width="100%"
+    height="400"
+    style="background:black;color:white;border:1px solid white;">
+    </iframe>
+
+    <!-- SECRET BUTTON -->
+    <div class="hiddenLink" onclick="nav('bwPage')"></div>
+</div>
+
+<br>
+
+<button onclick="nav('home')">BACK</button>
+
+</div>
+
+<!-- SECRET COMPANY PAGE -->
+<div id="bwPage" class="section">
+
+<h1>B&W MEAT SUPPLIERS</h1>
+
+<div class="docBox">
+
+<iframe src="bw_meat_suppliers.txt"
+width="100%"
+height="500"
+style="background:black;color:white;border:1px solid white;">
+</iframe>
+
+</div>
+
+<br>
+
+<button onclick="nav('documents')">BACK</button>
 
 </div>
 
@@ -252,6 +387,7 @@ input{
 
 let bootDone = false;
 let unlocked = false;
+let docsUnlocked = false;
 let bootStarted = false;
 
 /* START BOOT */
@@ -269,7 +405,6 @@ window.addEventListener("load", () => {
 
         bootStarted = true;
 
-        // startup sound DURING boot
         bootAudio.volume = 0.8;
         bootAudio.play().catch(()=>{});
 
@@ -330,7 +465,7 @@ window.addEventListener("load", () => {
     });
 });
 
-/* ENTER / TAP TO START */
+/* START SYSTEM */
 function startSystem(){
 
     if(!bootDone) return;
@@ -349,6 +484,16 @@ function nav(id){
 
         document.getElementById("status").innerText =
         "ACCESS REQUIRED";
+
+        return;
+    }
+
+    if(id === "documents" && !docsUnlocked){
+
+        nav("docPassword");
+
+        document.getElementById("docStatus").innerText =
+        "DOCUMENT ACCESS REQUIRED";
 
         return;
     }
@@ -409,6 +554,47 @@ function check(){
 
         status.innerText = "ACCESS DENIED";
     }
+}
+
+/* DOCUMENT PASSWORD */
+function checkDocs(){
+
+    let pass =
+    document.getElementById("docPass")
+    .value
+    .trim()
+    .toLowerCase();
+
+    if(pass === "salado texas"){
+
+        docsUnlocked = true;
+
+        document.getElementById("unlockSfx")
+        .play()
+        .catch(()=>{});
+
+        document.getElementById("docStatus")
+        .innerText = "DOCUMENT ACCESS GRANTED";
+
+        setTimeout(()=>{
+            nav("documents");
+        },800);
+
+    } else {
+
+        document.getElementById("docStatus")
+        .innerText = "ACCESS DENIED";
+    }
+}
+
+/* DOCUMENT TABS */
+function openDoc(id){
+
+    document.querySelectorAll(".docBox")
+    .forEach(d=>d.style.display="none");
+
+    document.getElementById(id)
+    .style.display="block";
 }
 
 /* AUDIO */
