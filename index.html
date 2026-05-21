@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archive Terminal</title>
+
+<!-- 80s terminal font -->
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+    margin:0;
+    background:black;
+    color:white;
+    font-family:'VT323', monospace;
+    overflow-x:hidden;
+    text-align:center;
+}
+
+/* CRT scanlines */
+body::before{
+    content:"";
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.05),
+        rgba(0,0,0,0.05) 2px
+    );
+    pointer-events:none;
+    z-index:9999;
+}
+
+/* Static overlay */
+#static{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    background:url("https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif");
+    opacity:0.05;
+    pointer-events:none;
+    z-index:9998;
+    mix-blend-mode:screen;
+}
+
+/* Flicker */
+@keyframes flicker{
+    0%{opacity:1;}
+    97%{opacity:1;}
+    98%{opacity:.95;}
+    99%{opacity:1;}
+    100%{opacity:1;}
+}
+
+body{
+    animation:flicker 4s infinite;
+}
+
+/* Layout */
+.section{
+    display:none;
+    padding:40px;
+}
+
+.active{
+    display:block;
+}
+
+h1{
+    font-size:60px;
+    letter-spacing:4px;
+}
+
+h2{
+    font-size:42px;
+}
+
+button{
+    font-family:'VT323', monospace;
+    background:black;
+    color:white;
+    border:1px solid white;
+    padding:12px;
+    margin:8px;
+    width:320px;
+    font-size:28px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:white;
+    color:black;
+}
+
+input{
+    font-family:'VT323', monospace;
+    background:black;
+    color:white;
+    border:1px solid white;
+    padding:10px;
+    width:320px;
+    font-size:28px;
+    text-align:center;
+}
+
+.newsBox{
+    border:1px solid white;
+    margin:20px auto;
+    padding:20px;
+    width:80%;
+    max-width:800px;
+}
+
+video{
+    width:80%;
+    max-width:700px;
+    border:1px solid white;
+}
+
+/* Audio Player */
+input[type=range]{
+    width:80%;
+    accent-color:white;
+}
+
+.imageBox{
+    width:300px;
+    height:300px;
+    margin:auto;
+    margin-top:20px;
+    border:1px solid white;
+    background-size:cover;
+    background-position:center;
+}
+
+/* Cascade animation */
+@keyframes cascade{
+    from{
+        opacity:0;
+        transform:translateY(-20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.cascade{
+    animation:cascade .6s forwards;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="static"></div>
+
+<!-- UI SOUNDS -->
+<audio id="clickSound" src="click.mp3"></audio>
+<audio id="unlockSound" src="unlock.mp3"></audio>
+
+<!-- HOME -->
+<div id="home" class="section active">
+
+    <h1>ARCHIVE TERMINAL</h1>
+
+    <button onclick="openReports()">NEWS REPORTS</button>
+    <button onclick="openPuzzle()">LOCKED ARCHIVE</button>
+
+</div>
+
+<!-- REPORTS -->
+<div id="reports" class="section">
+
+    <h2>NEWS REPORTS</h2>
+
+    <div class="newsBox">
+        <h3>REPORT 1</h3>
+        <p>Insert story text here.</p>
+    </div>
+
+    <div class="newsBox">
+        <h3>REPORT 2</h3>
+        <p>Insert story text here.</p>
+    </div>
+
+    <div class="newsBox">
+        <h3>REPORT 3</h3>
+        <p>Insert story text here.</p>
+    </div>
+
+    <h2>VIDEO FILE</h2>
+
+    <video controls>
+        <source src="video1.mp4" type="video/mp4">
+    </video>
+
+    <br><br>
+
+    <button onclick="goHome()">BACK</button>
+
+</div>
+
+<!-- PUZZLE -->
+<div id="puzzle" class="section">
+
+    <h2>ARCHIVE ACCESS</h2>
+
+    <p>ENTER THE FIVE IDENTITIES</p>
+
+    <input id="nameInput" placeholder="Enter Name">
+
+    <br>
+
+    <button onclick="submitName()">SUBMIT</button>
+
+    <p id="status"></p>
+
+    <button onclick="goHome()">BACK</button>
+
+</div>
+
+<!-- ARCHIVE -->
+<div id="archive" class="section">
+
+    <h2>AUDIO ARCHIVE</h2>
+
+    <button onclick="openLog('Sarah Mitchell')">Sarah Mitchell</button>
+    <button onclick="openLog('David Carter')">David Carter</button>
+    <button onclick="openLog('Marcus Reed')">Marcus Reed</button>
+    <button onclick="openLog('Olivia Hayes')">Olivia Hayes</button>
+    <button onclick="openLog('Daniel Brooks')">Daniel Brooks</button>
+
+    <br><br>
+
+    <button onclick="goHome()">EXIT</button>
+
+</div>
+
+<!-- LOG PAGE -->
+<div id="logPage" class="section">
+
+    <h2 id="logTitle"></h2>
+
+    <div id="imageBox" class="imageBox"></div>
+
+    <br>
+
+    <audio id="player"></audio>
+
+    <button onclick="playPause()">PLAY / PAUSE</button>
+    <button onclick="rewind()">-10s</button>
+    <button onclick="forward()">+10s</button>
+
+    <br><br>
+
+    <input type="range"
+           id="scrub"
+           min="0"
+           max="100"
+           value="0"
+           oninput="seekAudio(this.value)">
+
+    <p id="time">0:00 / 0:00</p>
+
+    <button onclick="backArchive()">BACK</button>
+
+</div>
+
+<script>
+
+/* UI SOUND */
+function uiClick(){
+    document.getElementById("clickSound").play();
+}
+
+/* SCREEN CONTROL */
+function show(id){
+
+    uiClick();
+
+    document.querySelectorAll(".section")
+    .forEach(s=>s.classList.remove("active"));
+
+    document.getElementById(id).classList.add("active");
+}
+
+function goHome(){ show("home"); }
+
+function openReports(){ show("reports"); }
+
+function openPuzzle(){ show("puzzle"); }
+
+/* NAME PUZZLE */
+const correctNames = [
+    "Sarah Mitchell",
+    "David Carter",
+    "Marcus Reed",
+    "Olivia Hayes",
+    "Daniel Brooks"
+];
+
+let entered = [];
+
+function submitName(){
+
+    uiClick();
+
+    let value =
+        document.getElementById("nameInput")
+        .value
+        .trim();
+
+    if(correctNames.includes(value)
+    && !entered.includes(value)){
+
+        entered.push(value);
+
+        document.getElementById("status")
+        .innerText =
+        entered.length + " / 5 CORRECT";
+
+    }else{
+
+        document.getElementById("status")
+        .innerText = "INVALID";
+    }
+
+    document.getElementById("nameInput").value="";
+
+    if(entered.length === 5){
+
+        document.getElementById("unlockSound").play();
+
+        setTimeout(()=>{
+            show("archive");
+        },700);
+    }
+}
+
+/* AUDIO FILES */
+const AUDIO = {
+    "Sarah Mitchell":"audio1.mp3",
+    "David Carter":"audio2.mp3",
+    "Marcus Reed":"audio3.mp3",
+    "Olivia Hayes":"audio4.mp3",
+    "Daniel Brooks":"audio5.mp3"
+};
+
+/* IMAGES */
+const IMAGES = {
+    "Sarah Mitchell":"img1.jpg",
+    "David Carter":"img2.jpg",
+    "Marcus Reed":"img3.jpg",
+    "Olivia Hayes":"img4.jpg",
+    "Daniel Brooks":"img5.jpg"
+};
+
+let player =
+document.getElementById("player");
+
+/* OPEN LOG */
+function openLog(name){
+
+    show("logPage");
+
+    document.getElementById("logTitle")
+    .innerText = name;
+
+    player.src = AUDIO[name];
+    player.load();
+
+    let box =
+    document.getElementById("imageBox");
+
+    box.style.opacity = 0;
+
+    setTimeout(()=>{
+        box.style.backgroundImage =
+        "url('" + IMAGES[name] + "')";
+        box.classList.add("cascade");
+        box.style.opacity = 1;
+    },200);
+
+    player.ontimeupdate = updateUI;
+    player.onloadedmetadata = updateUI;
+}
+
+function playPause(){
+
+    uiClick();
+
+    if(player.paused){
+        player.play();
+    }else{
+        player.pause();
+    }
+}
+
+function rewind(){
+    player.currentTime =
+    Math.max(0, player.currentTime - 10);
+}
+
+function forward(){
+    player.currentTime =
+    Math.min(player.duration,
+    player.currentTime + 10);
+}
+
+function seekAudio(v){
+
+    player.currentTime =
+    (v/100) * player.duration;
+}
+
+function updateUI(){
+
+    if(!player.duration) return;
+
+    document.getElementById("scrub")
+    .value =
+    (player.currentTime /
+    player.duration) * 100;
+
+    document.getElementById("time")
+    .innerText =
+    format(player.currentTime)
+    + " / " +
+    format(player.duration);
+}
+
+function format(t){
+
+    let m = Math.floor(t/60);
+    let s = Math.floor(t%60);
+
+    return m + ":" +
+    (s<10 ? "0"+s : s);
+}
+
+function backArchive(){
+    show("archive");
+}
+
+</script>
+
+</body>
+</html>
