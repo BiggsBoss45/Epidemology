@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -48,9 +49,7 @@ body::after{
 }
 
 /* GLITCH */
-.glitch{
-    animation: glitch 0.2s;
-}
+.glitch{ animation: glitch 0.2s; }
 
 @keyframes glitch{
     0%{transform:translate(0);}
@@ -92,8 +91,7 @@ video{
     filter:grayscale(1) contrast(1.4);
 }
 
-/* ================= BOOT ================= */
-
+/* BOOT SCREEN */
 #bootScreen{
     position:fixed;
     inset:0;
@@ -105,17 +103,24 @@ video{
     z-index:9999;
 }
 
-/* SMALLER LOGO */
+/* SMALL LOGO */
 #logo{
-    width:35vw;
-    max-width:350px;
+    width:30vw;
+    max-width:300px;
     opacity:0;
 }
 
-/* BIGGER SUBTITLE */
+/* BIG SUBTITLE */
 #subtitle{
     margin-top:20px;
-    font-size:34px;
+    font-size:40px;
+    opacity:0;
+}
+
+/* PRESS ENTER */
+#enterPrompt{
+    margin-top:30px;
+    font-size:26px;
     opacity:0;
 }
 
@@ -128,6 +133,7 @@ video{
 
 <audio id="clickSfx" src="click.mp3"></audio>
 <audio id="bootSfx" src="startup.mp3"></audio>
+<audio id="unlockSfx" src="unlock.mp3"></audio>
 
 <!-- BOOT -->
 <div id="bootScreen">
@@ -136,13 +142,38 @@ video{
         Epidemic Intelligence Service<br>
         Epidemiology
     </div>
+    <div id="enterPrompt">PRESS ENTER TO CONTINUE</div>
 </div>
 
 <!-- HOME -->
 <div id="home" class="section active">
+
 <h1>Epidemic Intelligence Service</h1>
+
 <button onclick="nav('videos')">VIDEO FILES</button>
-<button onclick="nav('audio')">AUDIO ARCHIVE</button>
+<button onclick="nav('password')">AUDIO ARCHIVE</button>
+
+</div>
+
+<!-- PASSWORD -->
+<div id="password" class="section">
+
+<h2>ENTER 5 IDENTITIES</h2>
+
+<input id="n1"><br>
+<input id="n2"><br>
+<input id="n3"><br>
+<input id="n4"><br>
+<input id="n5"><br>
+
+<br>
+
+<button onclick="check()">UNLOCK</button>
+<p id="status"></p>
+
+<br>
+<button onclick="nav('home')">BACK</button>
+
 </div>
 
 <!-- AUDIO -->
@@ -153,6 +184,8 @@ video{
 <button onclick="playAudio('audio1.mp3','img1.jpg')">LOG 1</button>
 <button onclick="playAudio('audio2.mp3','img2.jpg')">LOG 2</button>
 <button onclick="playAudio('audio3.mp3','img3.jpg')">LOG 3</button>
+<button onclick="playAudio('audio4.mp3','img4.jpg')">LOG 4</button>
+<button onclick="playAudio('audio5.mp3','img5.jpg')">LOG 5</button>
 
 <audio id="player"></audio>
 <div id="imgBox" class="imgBox"></div>
@@ -173,16 +206,15 @@ video{
 
 <h2>VIDEO FILES</h2>
 
-<video id="videoPlayer" controls src="video1.mp4"></video><br>
-
-<button onclick="videoPlayPause()">PLAY/PAUSE</button>
-<button onclick="videoRewind()">-10s</button>
-<button onclick="videoForward()">+10s</button>
-
-<br><br>
-
+<video controls src="video1.mp4"></video><br>
 <video controls src="video2.mp4"></video><br>
 <video controls src="video3.mp4"></video><br>
+<video controls src="video4.mp4"></video><br>
+<video controls src="video5.mp4"></video><br>
+<video controls src="video6.mp4"></video><br>
+<video controls src="video7.mp4"></video><br>
+<video controls src="video8.mp4"></video><br>
+<video controls src="video9.mp4"></video><br>
 
 <br>
 <button onclick="nav('home')">BACK</button>
@@ -193,25 +225,28 @@ video{
 
 let bootDone = false;
 
-/* BOOT ANIMATION (FIXED RELIABLE FADE) */
+/* BOOT SEQUENCE */
 window.addEventListener("load", () => {
 
     const logo = document.getElementById("logo");
     const sub = document.getElementById("subtitle");
+    const prompt = document.getElementById("enterPrompt");
+
+    document.getElementById("bootSfx").play().catch(()=>{});
 
     let start = Date.now();
 
     function animate(){
-        let t = (Date.now() - start) / 1000;
-        let fade = Math.min(1, t / 9);
+        let t = (Date.now()-start)/1000;
+        let fade = Math.min(1, t/9);
 
         logo.style.opacity = fade;
-        sub.style.opacity = Math.max(0, fade - 0.2);
+        sub.style.opacity = fade;
+        prompt.style.opacity = fade;
 
         if(t < 9){
             requestAnimationFrame(animate);
         } else {
-            document.getElementById("bootScreen").style.display = "none";
             bootDone = true;
         }
     }
@@ -219,9 +254,15 @@ window.addEventListener("load", () => {
     animate();
 });
 
-/* GLITCH NAV */
-function nav(id){
+/* PRESS ENTER AFTER BOOT */
+window.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter" && bootDone){
+        document.getElementById("bootScreen").style.display = "none";
+    }
+});
 
+/* NAV GLITCH */
+function nav(id){
     if(!bootDone) return;
 
     document.body.classList.add("glitch");
@@ -231,6 +272,8 @@ function nav(id){
         .forEach(s => s.classList.remove("active"));
 
     document.getElementById(id).classList.add("active");
+
+    document.getElementById("clickSfx").play().catch(()=>{});
 }
 
 /* AUDIO */
@@ -242,32 +285,9 @@ function playAudio(src,img){
     document.getElementById("imgBox").style.backgroundImage=`url(${img})`;
 }
 
-function audioPlayPause(){
-    audio.paused ? audio.play() : audio.pause();
-}
-
-function audioRewind(){
-    audio.currentTime = Math.max(0, audio.currentTime-10);
-}
-
-function audioForward(){
-    audio.currentTime = Math.min(audio.duration, audio.currentTime+10);
-}
-
-/* VIDEO */
-let video = document.getElementById("videoPlayer");
-
-function videoPlayPause(){
-    video.paused ? video.play() : video.pause();
-}
-
-function videoRewind(){
-    video.currentTime = Math.max(0, video.currentTime-10);
-}
-
-function videoForward(){
-    video.currentTime = Math.min(video.duration, video.currentTime+10);
-}
+function audioPlayPause(){ audio.paused ? audio.play() : audio.pause(); }
+function audioRewind(){ audio.currentTime = Math.max(0, audio.currentTime-10); }
+function audioForward(){ audio.currentTime = Math.min(audio.duration, audio.currentTime+10); }
 
 </script>
 
