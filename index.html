@@ -163,7 +163,7 @@ input{
     </div>
 
     <div id="enterPrompt">
-        PRESS ENTER OR TAP SCREEN
+        PLEASE PRESS ENTER OR TAP SCREEN
     </div>
 
 </div>
@@ -252,6 +252,7 @@ input{
 
 let bootDone = false;
 let unlocked = false;
+let bootStarted = false;
 
 /* START BOOT */
 window.addEventListener("load", () => {
@@ -262,46 +263,71 @@ window.addEventListener("load", () => {
 
     const bootAudio = document.getElementById("bootSfx");
 
-    let audioStarted = false;
-
     function beginBoot(){
 
-        if(audioStarted) return;
+        if(bootStarted) return;
 
-        audioStarted = true;
+        bootStarted = true;
 
         // startup sound DURING boot
         bootAudio.volume = 0.8;
-
         bootAudio.play().catch(()=>{});
-    }
 
-    // mobile interaction
-    document.addEventListener("click", beginBoot, { once:true });
-    document.addEventListener("touchstart", beginBoot, { once:true });
+        let start = Date.now();
 
-    // keyboard interaction
-    document.addEventListener("keydown", beginBoot, { once:true });
+        function animate(){
 
-    let start = Date.now();
+            let t = (Date.now()-start)/1000;
+            let f = Math.min(1, t/6);
 
-    function animate(){
+            logo.style.opacity = f;
+            sub.style.opacity = f;
+            prompt.style.opacity = f;
 
-        let t = (Date.now()-start)/1000;
-        let f = Math.min(1, t/6);
-
-        logo.style.opacity = f;
-        sub.style.opacity = f;
-        prompt.style.opacity = f;
-
-        if(t < 6){
-            requestAnimationFrame(animate);
-        } else {
-            bootDone = true;
+            if(t < 6){
+                requestAnimationFrame(animate);
+            } else {
+                bootDone = true;
+            }
         }
+
+        animate();
     }
 
-    animate();
+    // keyboard
+    document.addEventListener("keydown",(e)=>{
+
+        if(e.key === "Enter"){
+
+            if(!bootStarted){
+                beginBoot();
+            } else if(bootDone){
+                startSystem();
+            }
+        }
+    });
+
+    // click
+    document.getElementById("bootScreen")
+    .addEventListener("click", ()=>{
+
+        if(!bootStarted){
+            beginBoot();
+        } else if(bootDone){
+            startSystem();
+        }
+    });
+
+    // touch
+    document.getElementById("bootScreen")
+    .addEventListener("touchstart", ()=>{
+
+        if(!bootStarted){
+            beginBoot();
+        } else if(bootDone){
+            startSystem();
+        }
+    });
 });
 
 /* ENTER / TAP TO START */
@@ -311,26 +337,6 @@ function startSystem(){
 
     document.getElementById("bootScreen").style.display = "none";
 }
-
-window.addEventListener("keydown",(e)=>{
-
-    if(e.key === "Enter" && bootDone){
-
-        startSystem();
-    }
-});
-
-document.getElementById("bootScreen")
-.addEventListener("click", ()=>{
-
-    if(bootDone) startSystem();
-});
-
-document.getElementById("bootScreen")
-.addEventListener("touchstart", ()=>{
-
-    if(bootDone) startSystem();
-});
 
 /* NAVIGATION */
 function nav(id){
