@@ -6,7 +6,6 @@
 
 <title>CDC ARCHIVE TERMINAL</title>
 
-<!-- FIXED FONT LINK -->
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
 <style>
@@ -23,7 +22,7 @@ body{
     animation:flicker 3s infinite;
 }
 
-/* ================= CRT (FIXED FULL SCREEN) ================= */
+/* ================= CRT ================= */
 
 #crt{
     position:fixed;
@@ -40,7 +39,6 @@ body{
     );
 }
 
-/* vignette (FIXED SAFE LAYER) */
 body::after{
     content:"";
     position:fixed;
@@ -100,7 +98,7 @@ video{
     filter:grayscale(1) contrast(1.4);
 }
 
-/* ================= BOOT CANVAS ================= */
+/* ================= BOOT ================= */
 
 #bootCanvas{
     width:100vw;
@@ -113,7 +111,6 @@ video{
 
 <body>
 
-<!-- CRT -->
 <div id="crt"></div>
 
 <!-- AUDIO -->
@@ -173,6 +170,12 @@ video{
 <div id="imgBox" class="imgBox"></div>
 
 <br>
+
+<button onclick="audioPlayPause()">PLAY/PAUSE</button>
+<button onclick="audioRewind()">-10s</button>
+<button onclick="audioForward()">+10s</button>
+
+<br><br>
 <button onclick="nav('home')">BACK</button>
 
 </div>
@@ -182,7 +185,14 @@ video{
 
 <h2>VIDEO FILES</h2>
 
-<video controls src="video1.mp4"></video><br>
+<video id="videoPlayer" controls src="video1.mp4"></video><br>
+
+<button onclick="videoPlayPause()">PLAY/PAUSE</button>
+<button onclick="videoRewind()">-10s</button>
+<button onclick="videoForward()">+10s</button>
+
+<br><br>
+
 <video controls src="video2.mp4"></video><br>
 <video controls src="video3.mp4"></video><br>
 <video controls src="video4.mp4"></video><br>
@@ -199,23 +209,17 @@ video{
 
 <script>
 
-/* ================= STATE ================= */
+/* ================= BOOT ================= */
 
 let bootStarted = false;
 
-/* ================= BOOT TRIGGER ================= */
-
-window.addEventListener("keydown", e => {
-    if(e.key === "Enter" && !bootStarted){
+window.addEventListener("keydown", e=>{
+    if(e.key==="Enter" && !bootStarted){
         bootStarted = true;
-
         document.getElementById("bootSfx").play().catch(()=>{});
-
         startBoot();
     }
 });
-
-/* ================= CDC PARTICLE BOOT ================= */
 
 function startBoot(){
 
@@ -248,7 +252,9 @@ function startBoot(){
 
         let t=(Date.now()-start)/1000;
 
-        ctx.fillStyle="rgba(255,255,255,0.08)";
+        let fade = Math.min(1, t/3);
+
+        ctx.fillStyle = `rgba(255,255,255,${fade})`;
         ctx.font="140px VT323";
         ctx.textAlign="center";
         ctx.fillText("CDC",cx,cy);
@@ -309,14 +315,42 @@ function check(){
 
 /* ================= AUDIO ================= */
 
+let audio = document.getElementById("player");
+
 function playAudio(src,img){
+    audio.src = src;
+    audio.play();
+    document.getElementById("imgBox").style.backgroundImage=`url(${img})`;
+}
 
-    let p=document.getElementById("player");
-    p.src=src;
-    p.play();
+function audioPlayPause(){
+    if(audio.paused) audio.play();
+    else audio.pause();
+}
 
-    document.getElementById("imgBox").style.backgroundImage=
-    `url(${img})`;
+function audioRewind(){
+    audio.currentTime = Math.max(0, audio.currentTime-10);
+}
+
+function audioForward(){
+    audio.currentTime = Math.min(audio.duration, audio.currentTime+10);
+}
+
+/* ================= VIDEO ================= */
+
+let video = document.getElementById("videoPlayer");
+
+function videoPlayPause(){
+    if(video.paused) video.play();
+    else video.pause();
+}
+
+function videoRewind(){
+    video.currentTime = Math.max(0, video.currentTime-10);
+}
+
+function videoForward(){
+    video.currentTime = Math.min(video.duration, video.currentTime+10);
 }
 
 </script>
