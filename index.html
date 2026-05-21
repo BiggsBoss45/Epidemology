@@ -1,71 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Archive Terminal</title>
 
-<!-- 80s terminal font -->
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>CDC ARCHIVE TERMINAL</title>
+
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
 <style>
 
+/* =====================================================
+   BODY
+===================================================== */
+
 body{
+
     margin:0;
+
     background:black;
+
     color:white;
+
     font-family:'VT323', monospace;
+
     overflow-x:hidden;
+
     text-align:center;
+
+    animation:flicker 5s infinite;
 }
 
-/* CRT scanlines */
+/* =====================================================
+   CRT SCANLINES
+===================================================== */
+
 body::before{
+
     content:"";
+
     position:fixed;
+
     top:0;
     left:0;
+
     width:100%;
     height:100%;
-    background:repeating-linear-gradient(
+
+    background:
+    repeating-linear-gradient(
+
         to bottom,
-        rgba(255,255,255,0.05),
+
+        rgba(255,255,255,0.04),
+
         rgba(0,0,0,0.05) 2px
     );
+
     pointer-events:none;
+
     z-index:9999;
 }
 
-/* Static overlay */
+/* =====================================================
+   STATIC
+===================================================== */
+
 #static{
+
     position:fixed;
+
     width:100%;
     height:100%;
+
     top:0;
     left:0;
-    background:url("https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif");
-    opacity:0.05;
+
+    background:
+    url("https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif");
+
+    opacity:0.06;
+
     pointer-events:none;
+
     z-index:9998;
+
     mix-blend-mode:screen;
 }
 
-/* Flicker */
+/* =====================================================
+   CRT CURVE
+===================================================== */
+
+#curve{
+
+    position:fixed;
+
+    width:100%;
+    height:100%;
+
+    top:0;
+    left:0;
+
+    box-shadow:
+    inset 0 0 120px rgba(255,255,255,0.15),
+    inset 0 0 250px rgba(0,0,0,0.9);
+
+    pointer-events:none;
+
+    z-index:9997;
+}
+
+/* =====================================================
+   FLICKER
+===================================================== */
+
 @keyframes flicker{
+
     0%{opacity:1;}
-    97%{opacity:1;}
-    98%{opacity:.95;}
-    99%{opacity:1;}
+    96%{opacity:1;}
+    97%{opacity:.96;}
+    98%{opacity:1;}
+    99%{opacity:.97;}
     100%{opacity:1;}
 }
 
-body{
-    animation:flicker 4s infinite;
+/* =====================================================
+   VHS GLITCH
+===================================================== */
+
+@keyframes vhs{
+
+    0%{transform:translateX(0px);}
+    20%{transform:translateX(1px);}
+    40%{transform:translateX(-1px);}
+    60%{transform:translateX(1px);}
+    80%{transform:translateX(-1px);}
+    100%{transform:translateX(0px);}
 }
 
-/* Layout */
-.section{
+/* =====================================================
+   BOOT SCREEN
+===================================================== */
+
+#bootScreen{
+
+    position:fixed;
+
+    width:100%;
+    height:100%;
+
+    top:0;
+    left:0;
+
+    background:black;
+
+    z-index:20000;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    flex-direction:column;
+
+    overflow:hidden;
+}
+
+#pressEnter{
+
+    font-size:44px;
+
+    animation:flicker 1s infinite;
+}
+
+#cdcCanvas{
+
+    width:420px;
+    height:420px;
+
     display:none;
+
+    margin-bottom:20px;
+}
+
+#bootText{
+
+    font-size:34px;
+
+    letter-spacing:3px;
+
+    display:none;
+}
+
+/* =====================================================
+   TITLES
+===================================================== */
+
+h1{
+
+    font-size:72px;
+
+    letter-spacing:6px;
+
+    text-shadow:
+    0 0 5px white,
+    0 0 10px white;
+}
+
+h2{
+    font-size:42px;
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+button{
+
+    font-family:'VT323', monospace;
+
+    background:black;
+
+    color:white;
+
+    border:1px solid white;
+
+    padding:12px;
+
+    margin:10px;
+
+    width:340px;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+button:hover{
+
+    background:white;
+
+    color:black;
+
+    box-shadow:
+    0 0 10px white;
+}
+
+/* =====================================================
+   INPUTS
+===================================================== */
+
+input{
+
+    font-family:'VT323', monospace;
+
+    background:black;
+
+    color:white;
+
+    border:1px solid white;
+
+    padding:10px;
+
+    width:340px;
+
+    font-size:28px;
+
+    text-align:center;
+}
+
+/* =====================================================
+   SECTIONS
+===================================================== */
+
+.section{
+
+    display:none;
+
     padding:40px;
 }
 
@@ -73,192 +291,407 @@ body{
     display:block;
 }
 
-h1{
-    font-size:60px;
-    letter-spacing:4px;
-}
-
-h2{
-    font-size:42px;
-}
-
-button{
-    font-family:'VT323', monospace;
-    background:black;
-    color:white;
-    border:1px solid white;
-    padding:12px;
-    margin:8px;
-    width:320px;
-    font-size:28px;
-    cursor:pointer;
-}
-
-button:hover{
-    background:white;
-    color:black;
-}
-
-input{
-    font-family:'VT323', monospace;
-    background:black;
-    color:white;
-    border:1px solid white;
-    padding:10px;
-    width:320px;
-    font-size:28px;
-    text-align:center;
-}
-
-.newsBox{
-    border:1px solid white;
-    margin:20px auto;
-    padding:20px;
-    width:80%;
-    max-width:800px;
-}
+/* =====================================================
+   VIDEOS
+===================================================== */
 
 video{
+
     width:80%;
+
     max-width:700px;
-    border:1px solid white;
+
+    border:2px solid white;
+
+    filter:
+    grayscale(1)
+    contrast(1.2);
+
+    animation:vhs .05s infinite;
+
+    margin-bottom:30px;
 }
 
-/* Audio Player */
-input[type=range]{
+/* =====================================================
+   FILE BOX
+===================================================== */
+
+.fileBox{
+
+    border:1px solid white;
+
     width:80%;
-    accent-color:white;
+
+    max-width:850px;
+
+    margin:auto;
+
+    margin-bottom:40px;
+
+    padding:20px;
+
+    background:
+    rgba(255,255,255,0.03);
 }
+
+/* =====================================================
+   THUMBNAILS
+===================================================== */
+
+.thumb{
+
+    width:300px;
+    height:170px;
+
+    object-fit:cover;
+
+    border:1px solid white;
+
+    filter:
+    grayscale(1)
+    contrast(1.2);
+
+    margin-bottom:10px;
+}
+
+/* =====================================================
+   IMAGE BOX
+===================================================== */
 
 .imageBox{
-    width:300px;
-    height:300px;
+
+    width:320px;
+    height:320px;
+
     margin:auto;
+
     margin-top:20px;
+
     border:1px solid white;
+
     background-size:cover;
     background-position:center;
+
+    filter:
+    grayscale(1)
+    contrast(1.2);
 }
 
-/* Cascade animation */
+/* =====================================================
+   CASCADE
+===================================================== */
+
 @keyframes cascade{
+
     from{
+
         opacity:0;
-        transform:translateY(-20px);
+
+        transform:
+        translateY(-20px);
     }
+
     to{
+
         opacity:1;
-        transform:translateY(0);
+
+        transform:
+        translateY(0);
     }
 }
 
 .cascade{
-    animation:cascade .6s forwards;
+
+    animation:
+    cascade .7s forwards;
+}
+
+/* =====================================================
+   AUDIO SCRUB BAR
+===================================================== */
+
+input[type=range]{
+
+    width:80%;
+
+    accent-color:white;
 }
 
 </style>
+
 </head>
 
 <body>
 
+<!-- =====================================================
+     BOOT SCREEN
+===================================================== -->
+
+<div id="bootScreen">
+
+    <div id="pressEnter">
+        PRESS ENTER TO INITIALIZE CDC ARCHIVE
+    </div>
+
+    <canvas id="cdcCanvas"></canvas>
+
+    <div id="bootText"></div>
+
+</div>
+
+<!-- =====================================================
+     CRT OVERLAYS
+===================================================== -->
+
 <div id="static"></div>
+<div id="curve"></div>
 
-<!-- UI SOUNDS -->
-<audio id="clickSound" src="click.mp3"></audio>
-<audio id="unlockSound" src="unlock.mp3"></audio>
+<!-- =====================================================
+     SOUNDS
+===================================================== -->
 
-<!-- HOME -->
+<audio id="clickSound"
+src="sounds/click.mp3"></audio>
+
+<audio id="unlockSound"
+src="sounds/unlock.mp3"></audio>
+
+<audio id="bootSound"
+src="sounds/startup.mp3"></audio>
+
+<!-- =====================================================
+     HOME
+===================================================== -->
+
 <div id="home" class="section active">
 
     <h1>ARCHIVE TERMINAL</h1>
 
-    <button onclick="openReports()">NEWS REPORTS</button>
-    <button onclick="openPuzzle()">LOCKED ARCHIVE</button>
+    <button onclick="openReports()">
+        NEWS REPORTS
+    </button>
+
+    <button onclick="openPuzzle()">
+        LOCKED AUDIO LOGS
+    </button>
 
 </div>
 
-<!-- REPORTS -->
+<!-- =====================================================
+     REPORTS
+===================================================== -->
+
 <div id="reports" class="section">
 
-    <h2>NEWS REPORTS</h2>
+    <h2>RECOVERED VIDEO FILES</h2>
 
-    <div class="newsBox">
-        <h3>REPORT 1</h3>
-        <p>Insert story text here.</p>
+    <!-- VIDEO FILES -->
+
+    <div class="fileBox">
+        <img src="thumbs/thumb1.jpg" class="thumb">
+        <h3>RECOVERED FILE 1</h3>
+
+        <video controls>
+            <source src="videos/video1.mp4"
+            type="video/mp4">
+        </video>
     </div>
 
-    <div class="newsBox">
-        <h3>REPORT 2</h3>
-        <p>Insert story text here.</p>
+    <div class="fileBox">
+        <img src="thumbs/thumb2.jpg" class="thumb">
+        <h3>RECOVERED FILE 2</h3>
+
+        <video controls>
+            <source src="videos/video2.mp4"
+            type="video/mp4">
+        </video>
     </div>
 
-    <div class="newsBox">
-        <h3>REPORT 3</h3>
-        <p>Insert story text here.</p>
+    <div class="fileBox">
+        <img src="thumbs/thumb3.jpg" class="thumb">
+        <h3>RECOVERED FILE 3</h3>
+
+        <video controls>
+            <source src="videos/video3.mp4"
+            type="video/mp4">
+        </video>
     </div>
 
-    <h2>VIDEO FILE</h2>
+    <div class="fileBox">
+        <img src="thumbs/thumb4.jpg" class="thumb">
+        <h3>RECOVERED FILE 4</h3>
 
-    <video controls>
-        <source src="video1.mp4" type="video/mp4">
-    </video>
+        <video controls>
+            <source src="videos/video4.mp4"
+            type="video/mp4">
+        </video>
+    </div>
 
-    <br><br>
+    <div class="fileBox">
+        <img src="thumbs/thumb5.jpg" class="thumb">
+        <h3>RECOVERED FILE 5</h3>
 
-    <button onclick="goHome()">BACK</button>
+        <video controls>
+            <source src="videos/video5.mp4"
+            type="video/mp4">
+        </video>
+    </div>
+
+    <div class="fileBox">
+        <img src="thumbs/thumb6.jpg" class="thumb">
+        <h3>RECOVERED FILE 6</h3>
+
+        <video controls>
+            <source src="videos/video6.mp4"
+            type="video/mp4">
+        </video>
+    </div>
+
+    <div class="fileBox">
+        <img src="thumbs/thumb7.jpg" class="thumb">
+        <h3>RECOVERED FILE 7</h3>
+
+        <video controls>
+            <source src="videos/video7.mp4"
+            type="video/mp4">
+        </video>
+    </div>
+
+    <div class="fileBox">
+        <img src="thumbs/thumb8.jpg" class="thumb">
+        <h3>RECOVERED FILE 8</h3>
+
+        <video controls>
+            <source src="videos/video8.mp4"
+            type="video/mp4">
+        </video>
+    </div>
+
+    <div class="fileBox">
+        <img src="thumbs/thumb9.jpg" class="thumb">
+        <h3>RECOVERED FILE 9</h3>
+
+        <video controls>
+            <source src="videos/video9.mp4"
+            type="video/mp4">
+        </video>
+    </div>
+
+    <button onclick="goHome()">
+        BACK
+    </button>
 
 </div>
 
-<!-- PUZZLE -->
+<!-- =====================================================
+     PASSWORD SCREEN
+===================================================== -->
+
 <div id="puzzle" class="section">
 
     <h2>ARCHIVE ACCESS</h2>
 
-    <p>ENTER THE FIVE IDENTITIES</p>
+    <p>ENTER ALL FIVE IDENTITIES</p>
 
-    <input id="nameInput" placeholder="Enter Name">
+    <input id="name1"
+    placeholder="Identity 1">
 
-    <br>
+    <br><br>
 
-    <button onclick="submitName()">SUBMIT</button>
+    <input id="name2"
+    placeholder="Identity 2">
+
+    <br><br>
+
+    <input id="name3"
+    placeholder="Identity 3">
+
+    <br><br>
+
+    <input id="name4"
+    placeholder="Identity 4">
+
+    <br><br>
+
+    <input id="name5"
+    placeholder="Identity 5">
+
+    <br><br>
+
+    <button onclick="submitNames()">
+        VERIFY
+    </button>
 
     <p id="status"></p>
 
-    <button onclick="goHome()">BACK</button>
+    <button onclick="goHome()">
+        BACK
+    </button>
 
 </div>
 
-<!-- ARCHIVE -->
+<!-- =====================================================
+     AUDIO ARCHIVE
+===================================================== -->
+
 <div id="archive" class="section">
 
     <h2>AUDIO ARCHIVE</h2>
 
-    <button onclick="openLog('Sarah Mitchell')">Sarah Mitchell</button>
-    <button onclick="openLog('David Carter')">David Carter</button>
-    <button onclick="openLog('Marcus Reed')">Marcus Reed</button>
-    <button onclick="openLog('Olivia Hayes')">Olivia Hayes</button>
-    <button onclick="openLog('Daniel Brooks')">Daniel Brooks</button>
+    <button onclick="openLog('Sarah Mitchell')">
+        Sarah Mitchell
+    </button>
+
+    <button onclick="openLog('David Carter')">
+        David Carter
+    </button>
+
+    <button onclick="openLog('Marcus Reed')">
+        Marcus Reed
+    </button>
+
+    <button onclick="openLog('Olivia Hayes')">
+        Olivia Hayes
+    </button>
+
+    <button onclick="openLog('Daniel Brooks')">
+        Daniel Brooks
+    </button>
 
     <br><br>
 
-    <button onclick="goHome()">EXIT</button>
+    <button onclick="goHome()">
+        EXIT
+    </button>
 
 </div>
 
-<!-- LOG PAGE -->
+<!-- =====================================================
+     AUDIO LOG PAGE
+===================================================== -->
+
 <div id="logPage" class="section">
 
     <h2 id="logTitle"></h2>
 
-    <div id="imageBox" class="imageBox"></div>
+    <div id="imageBox"
+    class="imageBox"></div>
 
     <br>
 
     <audio id="player"></audio>
 
-    <button onclick="playPause()">PLAY / PAUSE</button>
-    <button onclick="rewind()">-10s</button>
-    <button onclick="forward()">+10s</button>
+    <button onclick="playPause()">
+        PLAY / PAUSE
+    </button>
+
+    <button onclick="rewind()">
+        -10s
+    </button>
+
+    <button onclick="forward()">
+        +10s
+    </button>
 
     <br><br>
 
@@ -271,36 +704,201 @@ input[type=range]{
 
     <p id="time">0:00 / 0:00</p>
 
-    <button onclick="backArchive()">BACK</button>
+    <button onclick="backArchive()">
+        BACK
+    </button>
 
 </div>
 
 <script>
 
-/* UI SOUND */
-function uiClick(){
-    document.getElementById("clickSound").play();
+/* =====================================================
+   BOOT SEQUENCE
+===================================================== */
+
+let started = false;
+
+window.addEventListener("keydown", function(e){
+
+    if(e.key === "Enter" && !started){
+
+        started = true;
+
+        startBootSequence();
+    }
+});
+
+function startBootSequence(){
+
+    document.getElementById(
+        "pressEnter"
+    ).style.display = "none";
+
+    document.getElementById(
+        "cdcCanvas"
+    ).style.display = "block";
+
+    document.getElementById(
+        "bootText"
+    ).style.display = "block";
+
+    document.getElementById(
+        "bootSound"
+    ).play();
+
+    const canvas =
+    document.getElementById(
+        "cdcCanvas"
+    );
+
+    const ctx =
+    canvas.getContext("2d");
+
+    canvas.width = 420;
+    canvas.height = 420;
+
+    let particles = [];
+
+    for(let i=0;i<700;i++){
+
+        particles.push({
+
+            x:Math.random()*420,
+            y:Math.random()*420,
+
+            tx:210 + Math.cos(i)*120,
+            ty:210 + Math.sin(i)*120,
+
+            size:2
+        });
+    }
+
+    let start = Date.now();
+
+    function animate(){
+
+        ctx.clearRect(0,0,420,420);
+
+        ctx.strokeStyle = "white";
+
+        ctx.lineWidth = 4;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            210,
+            210,
+            120,
+            0,
+            Math.PI*2
+        );
+
+        ctx.stroke();
+
+        ctx.font =
+        "38px VT323";
+
+        ctx.fillStyle =
+        "white";
+
+        ctx.fillText(
+            "CDC",
+            165,
+            225
+        );
+
+        particles.forEach(p=>{
+
+            p.x +=
+            (p.tx-p.x)*0.03;
+
+            p.y +=
+            (p.ty-p.y)*0.03;
+
+            ctx.fillRect(
+                p.x,
+                p.y,
+                p.size,
+                p.size
+            );
+        });
+
+        let elapsed =
+        (Date.now()-start)/1000;
+
+        document.getElementById(
+            "bootText"
+        ).innerText =
+        "INITIALIZING ARCHIVE DATABASE...";
+
+        if(elapsed < 9){
+
+            requestAnimationFrame(
+                animate
+            );
+
+        }else{
+
+            document.getElementById(
+                "bootScreen"
+            ).style.display =
+            "none";
+        }
+    }
+
+    animate();
 }
 
-/* SCREEN CONTROL */
+/* =====================================================
+   UI SOUND
+===================================================== */
+
+function uiClick(){
+
+    document.getElementById(
+        "clickSound"
+    ).play();
+}
+
+/* =====================================================
+   SCREEN CONTROL
+===================================================== */
+
 function show(id){
 
     uiClick();
 
-    document.querySelectorAll(".section")
-    .forEach(s=>s.classList.remove("active"));
+    document.querySelectorAll(
+        ".section"
+    ).forEach(s=>
 
-    document.getElementById(id).classList.add("active");
+        s.classList.remove(
+            "active"
+        )
+    );
+
+    document.getElementById(id)
+    .classList.add("active");
 }
 
-function goHome(){ show("home"); }
+function goHome(){
+    show("home");
+}
 
-function openReports(){ show("reports"); }
+function openReports(){
+    show("reports");
+}
 
-function openPuzzle(){ show("puzzle"); }
+function openPuzzle(){
+    show("puzzle");
+}
 
-/* NAME PUZZLE */
+/* =====================================================
+   PASSWORD SYSTEM
+===================================================== */
+
 const correctNames = [
+
     "Sarah Mitchell",
     "David Carter",
     "Marcus Reed",
@@ -308,90 +906,169 @@ const correctNames = [
     "Daniel Brooks"
 ];
 
-let entered = [];
-
-function submitName(){
+function submitNames(){
 
     uiClick();
 
-    let value =
-        document.getElementById("nameInput")
-        .value
-        .trim();
+    let inputs = [
 
-    if(correctNames.includes(value)
-    && !entered.includes(value)){
+        document.getElementById(
+            "name1"
+        ).value.trim(),
 
-        entered.push(value);
+        document.getElementById(
+            "name2"
+        ).value.trim(),
 
-        document.getElementById("status")
-        .innerText =
-        entered.length + " / 5 CORRECT";
+        document.getElementById(
+            "name3"
+        ).value.trim(),
+
+        document.getElementById(
+            "name4"
+        ).value.trim(),
+
+        document.getElementById(
+            "name5"
+        ).value.trim()
+    ];
+
+    let unique =
+    [...new Set(inputs)];
+
+    if(unique.length !== 5){
+
+        document.getElementById(
+            "status"
+        ).innerText =
+        "DUPLICATE IDENTITIES DETECTED";
+
+        return;
+    }
+
+    let allCorrect =
+    unique.every(
+        n => correctNames.includes(n)
+    );
+
+    if(allCorrect){
+
+        document.getElementById(
+            "status"
+        ).innerText =
+        "ACCESS GRANTED";
+
+        document.getElementById(
+            "unlockSound"
+        ).play();
+
+        setTimeout(()=>{
+
+            show("archive");
+
+        },700);
 
     }else{
 
-        document.getElementById("status")
-        .innerText = "INVALID";
-    }
-
-    document.getElementById("nameInput").value="";
-
-    if(entered.length === 5){
-
-        document.getElementById("unlockSound").play();
-
-        setTimeout(()=>{
-            show("archive");
-        },700);
+        document.getElementById(
+            "status"
+        ).innerText =
+        "ACCESS DENIED";
     }
 }
 
-/* AUDIO FILES */
+/* =====================================================
+   AUDIO FILES
+===================================================== */
+
 const AUDIO = {
-    "Sarah Mitchell":"audio1.mp3",
-    "David Carter":"audio2.mp3",
-    "Marcus Reed":"audio3.mp3",
-    "Olivia Hayes":"audio4.mp3",
-    "Daniel Brooks":"audio5.mp3"
+
+    "Sarah Mitchell":
+    "audio/audio1.mp3",
+
+    "David Carter":
+    "audio/audio2.mp3",
+
+    "Marcus Reed":
+    "audio/audio3.mp3",
+
+    "Olivia Hayes":
+    "audio/audio4.mp3",
+
+    "Daniel Brooks":
+    "audio/audio5.mp3"
 };
 
-/* IMAGES */
+/* =====================================================
+   IMAGES
+===================================================== */
+
 const IMAGES = {
-    "Sarah Mitchell":"img1.jpg",
-    "David Carter":"img2.jpg",
-    "Marcus Reed":"img3.jpg",
-    "Olivia Hayes":"img4.jpg",
-    "Daniel Brooks":"img5.jpg"
+
+    "Sarah Mitchell":
+    "images/img1.jpg",
+
+    "David Carter":
+    "images/img2.jpg",
+
+    "Marcus Reed":
+    "images/img3.jpg",
+
+    "Olivia Hayes":
+    "images/img4.jpg",
+
+    "Daniel Brooks":
+    "images/img5.jpg"
 };
 
 let player =
-document.getElementById("player");
+document.getElementById(
+    "player"
+);
 
-/* OPEN LOG */
+/* =====================================================
+   OPEN LOG
+===================================================== */
+
 function openLog(name){
 
     show("logPage");
 
-    document.getElementById("logTitle")
-    .innerText = name;
+    document.getElementById(
+        "logTitle"
+    ).innerText = name;
 
     player.src = AUDIO[name];
+
     player.load();
 
     let box =
-    document.getElementById("imageBox");
+    document.getElementById(
+        "imageBox"
+    );
 
     box.style.opacity = 0;
 
     setTimeout(()=>{
+
         box.style.backgroundImage =
-        "url('" + IMAGES[name] + "')";
-        box.classList.add("cascade");
+        "url('" +
+        IMAGES[name] +
+        "')";
+
+        box.classList.add(
+            "cascade"
+        );
+
         box.style.opacity = 1;
+
     },200);
 
-    player.ontimeupdate = updateUI;
-    player.onloadedmetadata = updateUI;
+    player.ontimeupdate =
+    updateUI;
+
+    player.onloadedmetadata =
+    updateUI;
 }
 
 function playPause(){
@@ -399,55 +1076,87 @@ function playPause(){
     uiClick();
 
     if(player.paused){
+
         player.play();
+
     }else{
+
         player.pause();
     }
 }
 
 function rewind(){
+
     player.currentTime =
-    Math.max(0, player.currentTime - 10);
+
+    Math.max(
+        0,
+        player.currentTime - 10
+    );
 }
 
 function forward(){
+
     player.currentTime =
-    Math.min(player.duration,
-    player.currentTime + 10);
+
+    Math.min(
+        player.duration,
+        player.currentTime + 10
+    );
 }
 
 function seekAudio(v){
 
     player.currentTime =
-    (v/100) * player.duration;
+
+    (v/100) *
+    player.duration;
 }
 
 function updateUI(){
 
-    if(!player.duration) return;
+    if(!player.duration)
+    return;
 
-    document.getElementById("scrub")
-    .value =
+    document.getElementById(
+        "scrub"
+    ).value =
+
     (player.currentTime /
     player.duration) * 100;
 
-    document.getElementById("time")
-    .innerText =
-    format(player.currentTime)
+    document.getElementById(
+        "time"
+    ).innerText =
+
+    format(
+        player.currentTime
+    )
+
     + " / " +
-    format(player.duration);
+
+    format(
+        player.duration
+    );
 }
 
 function format(t){
 
-    let m = Math.floor(t/60);
-    let s = Math.floor(t%60);
+    let m =
+    Math.floor(t/60);
+
+    let s =
+    Math.floor(t%60);
 
     return m + ":" +
-    (s<10 ? "0"+s : s);
+
+    (s<10 ?
+        "0"+s : s
+    );
 }
 
 function backArchive(){
+
     show("archive");
 }
 
