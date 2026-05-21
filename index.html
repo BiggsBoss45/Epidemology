@@ -47,16 +47,16 @@ body::after{
     );
 }
 
-/* VHS TAB DISTORTION */
+/* GLITCH */
 .glitch{
     animation: glitch 0.2s;
 }
 
 @keyframes glitch{
     0%{transform:translate(0);}
-    20%{transform:translate(-3px,1px);}
-    40%{transform:translate(3px,-1px);}
-    60%{transform:translate(-1px,2px);}
+    25%{transform:translate(-3px,1px);}
+    50%{transform:translate(3px,-1px);}
+    75%{transform:translate(-1px,2px);}
     100%{transform:translate(0);}
 }
 
@@ -92,7 +92,8 @@ video{
     filter:grayscale(1) contrast(1.4);
 }
 
-/* BOOT SCREEN */
+/* ================= BOOT ================= */
+
 #bootScreen{
     position:fixed;
     inset:0;
@@ -104,16 +105,17 @@ video{
     z-index:9999;
 }
 
-/* LOGO */
+/* SMALLER LOGO */
 #logo{
-    width:60vw;
-    max-width:700px;
+    width:35vw;
+    max-width:350px;
     opacity:0;
 }
 
-/* subtitle */
+/* BIGGER SUBTITLE */
 #subtitle{
     margin-top:20px;
+    font-size:34px;
     opacity:0;
 }
 
@@ -191,13 +193,9 @@ video{
 
 let bootDone = false;
 
-/* REQUIRED: unlock audio */
-document.addEventListener("click", () => {
-    document.getElementById("bootSfx").play().catch(()=>{});
-}, { once:true });
-
-/* BOOT SEQUENCE */
+/* BOOT ANIMATION (FIXED RELIABLE FADE) */
 window.addEventListener("load", () => {
+
     const logo = document.getElementById("logo");
     const sub = document.getElementById("subtitle");
 
@@ -205,11 +203,10 @@ window.addEventListener("load", () => {
 
     function animate(){
         let t = (Date.now() - start) / 1000;
-
         let fade = Math.min(1, t / 9);
 
         logo.style.opacity = fade;
-        sub.style.opacity = Math.max(0, fade - 0.3);
+        sub.style.opacity = Math.max(0, fade - 0.2);
 
         if(t < 9){
             requestAnimationFrame(animate);
@@ -222,7 +219,7 @@ window.addEventListener("load", () => {
     animate();
 });
 
-/* TAB GLITCH */
+/* GLITCH NAV */
 function nav(id){
 
     if(!bootDone) return;
@@ -242,7 +239,7 @@ let audio = document.getElementById("player");
 function playAudio(src,img){
     audio.src = src;
     audio.play();
-    document.getElementById("imgBox").style.backgroundImage = `url(${img})`;
+    document.getElementById("imgBox").style.backgroundImage=`url(${img})`;
 }
 
 function audioPlayPause(){
@@ -250,11 +247,11 @@ function audioPlayPause(){
 }
 
 function audioRewind(){
-    audio.currentTime = Math.max(0, audio.currentTime - 10);
+    audio.currentTime = Math.max(0, audio.currentTime-10);
 }
 
 function audioForward(){
-    audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+    audio.currentTime = Math.min(audio.duration, audio.currentTime+10);
 }
 
 /* VIDEO */
@@ -265,11 +262,11 @@ function videoPlayPause(){
 }
 
 function videoRewind(){
-    video.currentTime = Math.max(0, video.currentTime - 10);
+    video.currentTime = Math.max(0, video.currentTime-10);
 }
 
 function videoForward(){
-    video.currentTime = Math.min(video.duration, video.currentTime + 10);
+    video.currentTime = Math.min(video.duration, video.currentTime+10);
 }
 
 </script>
