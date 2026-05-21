@@ -173,15 +173,17 @@ body::before{
 
 #pressEnter{
 
-    font-size:44px;
+    font-size:46px;
 
     animation:flicker 1s infinite;
 }
 
 #cdcCanvas{
 
-    width:420px;
-    height:420px;
+    width:520px;
+    height:520px;
+
+    max-width:90vw;
 
     display:none;
 
@@ -190,11 +192,28 @@ body::before{
 
 #bootText{
 
-    font-size:34px;
+    font-size:36px;
 
     letter-spacing:3px;
 
     display:none;
+
+    margin-top:20px;
+}
+
+/* =====================================================
+   SECTIONS
+===================================================== */
+
+.section{
+
+    display:none;
+
+    padding:20px;
+}
+
+.active{
+    display:block;
 }
 
 /* =====================================================
@@ -236,6 +255,8 @@ button{
 
     width:340px;
 
+    max-width:90vw;
+
     font-size:28px;
 
     cursor:pointer;
@@ -271,24 +292,11 @@ input{
 
     width:340px;
 
+    max-width:90vw;
+
     font-size:28px;
 
     text-align:center;
-}
-
-/* =====================================================
-   SECTIONS
-===================================================== */
-
-.section{
-
-    display:none;
-
-    padding:40px;
-}
-
-.active{
-    display:block;
 }
 
 /* =====================================================
@@ -297,9 +305,9 @@ input{
 
 video{
 
-    width:80%;
+    width:90%;
 
-    max-width:700px;
+    max-width:750px;
 
     border:2px solid white;
 
@@ -320,7 +328,7 @@ video{
 
     border:1px solid white;
 
-    width:80%;
+    width:90%;
 
     max-width:850px;
 
@@ -340,10 +348,11 @@ video{
 
 .thumb{
 
-    width:300px;
-    height:170px;
+    width:90%;
 
-    object-fit:cover;
+    max-width:320px;
+
+    height:auto;
 
     border:1px solid white;
 
@@ -362,6 +371,8 @@ video{
 
     width:320px;
     height:320px;
+
+    max-width:90vw;
 
     margin:auto;
 
@@ -388,7 +399,7 @@ video{
         opacity:0;
 
         transform:
-        translateY(-20px);
+        translateY(-40px);
     }
 
     to{
@@ -403,16 +414,16 @@ video{
 .cascade{
 
     animation:
-    cascade .7s forwards;
+    cascade 1.5s forwards;
 }
 
 /* =====================================================
-   AUDIO SCRUB BAR
+   AUDIO BAR
 ===================================================== */
 
 input[type=range]{
 
-    width:80%;
+    width:90%;
 
     accent-color:white;
 }
@@ -430,7 +441,7 @@ input[type=range]{
 <div id="bootScreen">
 
     <div id="pressEnter">
-        PRESS ENTER TO INITIALIZE CDC ARCHIVE
+        PRESS ENTER OR TAP SCREEN
     </div>
 
     <canvas id="cdcCanvas"></canvas>
@@ -450,14 +461,9 @@ input[type=range]{
      SOUNDS
 ===================================================== -->
 
-<audio id="clickSound"
-src="sounds/click.mp3"></audio>
-
-<audio id="unlockSound"
-src="sounds/unlock.mp3"></audio>
-
-<audio id="bootSound"
-src="sounds/startup.mp3"></audio>
+<audio id="clickSound" src="click.mp3"></audio>
+<audio id="unlockSound" src="unlock.mp3"></audio>
+<audio id="bootSound" src="startup.mp3"></audio>
 
 <!-- =====================================================
      HOME
@@ -485,97 +491,169 @@ src="sounds/startup.mp3"></audio>
 
     <h2>RECOVERED VIDEO FILES</h2>
 
-    <!-- VIDEO FILES -->
+
 
     <div class="fileBox">
-        <img src="thumbs/thumb1.jpg" class="thumb">
+
+        <img src="thumb1.jpg"
+        class="thumb">
+
         <h3>RECOVERED FILE 1</h3>
 
         <video controls>
-            <source src="videos/video1.mp4"
+
+            <source src="video1.mp4"
             type="video/mp4">
+
         </video>
+
     </div>
 
+
+
     <div class="fileBox">
-        <img src="thumbs/thumb2.jpg" class="thumb">
+
+        <img src="thumb2.jpg"
+        class="thumb">
+
         <h3>RECOVERED FILE 2</h3>
 
         <video controls>
-            <source src="videos/video2.mp4"
+
+            <source src="video2.mp4"
             type="video/mp4">
+
         </video>
+
     </div>
 
+
+
     <div class="fileBox">
-        <img src="thumbs/thumb3.jpg" class="thumb">
+
+        <img src="thumb3.jpg"
+        class="thumb">
+
         <h3>RECOVERED FILE 3</h3>
 
         <video controls>
-            <source src="videos/video3.mp4"
+
+            <source src="video3.mp4"
             type="video/mp4">
+
         </video>
+
     </div>
 
+
+
     <div class="fileBox">
-        <img src="thumbs/thumb4.jpg" class="thumb">
+
+        <img src="thumb4.jpg"
+        class="thumb">
+
         <h3>RECOVERED FILE 4</h3>
 
         <video controls>
-            <source src="videos/video4.mp4"
+
+            <source src="video4.mp4"
             type="video/mp4">
+
         </video>
+
     </div>
 
+
+
     <div class="fileBox">
-        <img src="thumbs/thumb5.jpg" class="thumb">
+
+        <img src="thumb5.jpg"
+        class="thumb">
+
         <h3>RECOVERED FILE 5</h3>
 
         <video controls>
-            <source src="videos/video5.mp4"
+
+            <source src="video5.mp4"
             type="video/mp4">
+
         </video>
+
     </div>
 
+
+
     <div class="fileBox">
-        <img src="thumbs/thumb6.jpg" class="thumb">
+
+        <img src="thumb6.jpg"
+        class="thumb">
+
         <h3>RECOVERED FILE 6</h3>
 
         <video controls>
-            <source src="videos/video6.mp4"
+
+            <source src="video6.mp4"
             type="video/mp4">
+
         </video>
+
     </div>
 
+
+
     <div class="fileBox">
-        <img src="thumbs/thumb7.jpg" class="thumb">
+
+        <img src="thumb7.jpg"
+        class="thumb">
+
         <h3>RECOVERED FILE 7</h3>
 
         <video controls>
-            <source src="videos/video7.mp4"
+
+            <source src="video7.mp4"
             type="video/mp4">
+
         </video>
+
     </div>
 
+
+
     <div class="fileBox">
-        <img src="thumbs/thumb8.jpg" class="thumb">
+
+        <img src="thumb8.jpg"
+        class="thumb">
+
         <h3>RECOVERED FILE 8</h3>
 
         <video controls>
-            <source src="videos/video8.mp4"
+
+            <source src="video8.mp4"
             type="video/mp4">
+
         </video>
+
     </div>
 
+
+
     <div class="fileBox">
-        <img src="thumbs/thumb9.jpg" class="thumb">
+
+        <img src="thumb9.jpg"
+        class="thumb">
+
         <h3>RECOVERED FILE 9</h3>
 
         <video controls>
-            <source src="videos/video9.mp4"
+
+            <source src="video9.mp4"
             type="video/mp4">
+
         </video>
+
     </div>
+
+
 
     <button onclick="goHome()">
         BACK
@@ -631,7 +709,7 @@ src="sounds/startup.mp3"></audio>
 </div>
 
 <!-- =====================================================
-     AUDIO ARCHIVE
+     ARCHIVE
 ===================================================== -->
 
 <div id="archive" class="section">
@@ -718,15 +796,18 @@ src="sounds/startup.mp3"></audio>
 
 let started = false;
 
-window.addEventListener("keydown", function(e){
+window.addEventListener("keydown", startInput);
+window.addEventListener("click", startInput);
 
-    if(e.key === "Enter" && !started){
+function startInput(e){
+
+    if(!started){
 
         started = true;
 
         startBootSequence();
     }
-});
+}
 
 function startBootSequence(){
 
@@ -754,22 +835,28 @@ function startBootSequence(){
     const ctx =
     canvas.getContext("2d");
 
-    canvas.width = 420;
-    canvas.height = 420;
+    canvas.width = 520;
+    canvas.height = 520;
 
     let particles = [];
 
-    for(let i=0;i<700;i++){
+    /* MORE PARTICLES */
+
+    for(let i=0;i<3000;i++){
 
         particles.push({
 
-            x:Math.random()*420,
-            y:Math.random()*420,
+            x:Math.random()*520,
+            y:Math.random()*520,
 
-            tx:210 + Math.cos(i)*120,
-            ty:210 + Math.sin(i)*120,
+            tx:260 +
+            Math.cos(i*0.1)*170,
 
-            size:2
+            ty:260 +
+            Math.sin(i*0.1)*170,
+
+            size:
+            Math.random()*2+1
         });
     }
 
@@ -777,18 +864,27 @@ function startBootSequence(){
 
     function animate(){
 
-        ctx.clearRect(0,0,420,420);
+        ctx.fillStyle =
+        "rgba(0,0,0,0.2)";
 
-        ctx.strokeStyle = "white";
+        ctx.fillRect(
+            0,
+            0,
+            520,
+            520
+        );
+
+        ctx.strokeStyle =
+        "white";
 
         ctx.lineWidth = 4;
 
         ctx.beginPath();
 
         ctx.arc(
-            210,
-            210,
-            120,
+            260,
+            260,
+            170,
             0,
             Math.PI*2
         );
@@ -796,24 +892,24 @@ function startBootSequence(){
         ctx.stroke();
 
         ctx.font =
-        "38px VT323";
+        "58px VT323";
 
         ctx.fillStyle =
         "white";
 
         ctx.fillText(
             "CDC",
-            165,
-            225
+            205,
+            280
         );
 
         particles.forEach(p=>{
 
             p.x +=
-            (p.tx-p.x)*0.03;
+            (p.tx-p.x)*0.015;
 
             p.y +=
-            (p.ty-p.y)*0.03;
+            (p.ty-p.y)*0.015;
 
             ctx.fillRect(
                 p.x,
@@ -826,12 +922,40 @@ function startBootSequence(){
         let elapsed =
         (Date.now()-start)/1000;
 
-        document.getElementById(
-            "bootText"
-        ).innerText =
-        "INITIALIZING ARCHIVE DATABASE...";
+        /* CHANGING BOOT TEXT */
 
-        if(elapsed < 9){
+        if(elapsed < 4){
+
+            document.getElementById(
+                "bootText"
+            ).innerText =
+            "CONNECTING TO CDC SERVERS";
+
+        }else if(elapsed < 8){
+
+            document.getElementById(
+                "bootText"
+            ).innerText =
+            "RECOVERING ARCHIVE FILES";
+
+        }else if(elapsed < 12){
+
+            document.getElementById(
+                "bootText"
+            ).innerText =
+            "DECRYPTING CLASSIFIED DATA";
+
+        }else{
+
+            document.getElementById(
+                "bootText"
+            ).innerText =
+            "ACCESS GRANTED";
+        }
+
+        /* LONGER BOOT */
+
+        if(elapsed < 15){
 
             requestAnimationFrame(
                 animate
@@ -936,22 +1060,13 @@ function submitNames(){
     let unique =
     [...new Set(inputs)];
 
-    if(unique.length !== 5){
-
-        document.getElementById(
-            "status"
-        ).innerText =
-        "DUPLICATE IDENTITIES DETECTED";
-
-        return;
-    }
-
     let allCorrect =
     unique.every(
         n => correctNames.includes(n)
     );
 
-    if(allCorrect){
+    if(allCorrect &&
+    unique.length === 5){
 
         document.getElementById(
             "status"
@@ -984,19 +1099,19 @@ function submitNames(){
 const AUDIO = {
 
     "Sarah Mitchell":
-    "audio/audio1.mp3",
+    "audio1.mp3",
 
     "David Carter":
-    "audio/audio2.mp3",
+    "audio2.mp3",
 
     "Marcus Reed":
-    "audio/audio3.mp3",
+    "audio3.mp3",
 
     "Olivia Hayes":
-    "audio/audio4.mp3",
+    "audio4.mp3",
 
     "Daniel Brooks":
-    "audio/audio5.mp3"
+    "audio5.mp3"
 };
 
 /* =====================================================
@@ -1006,19 +1121,19 @@ const AUDIO = {
 const IMAGES = {
 
     "Sarah Mitchell":
-    "images/img1.jpg",
+    "img1.jpg",
 
     "David Carter":
-    "images/img2.jpg",
+    "img2.jpg",
 
     "Marcus Reed":
-    "images/img3.jpg",
+    "img3.jpg",
 
     "Olivia Hayes":
-    "images/img4.jpg",
+    "img4.jpg",
 
     "Daniel Brooks":
-    "images/img5.jpg"
+    "img5.jpg"
 };
 
 let player =
