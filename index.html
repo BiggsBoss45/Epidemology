@@ -9,12 +9,14 @@
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
 <style>
+
 body{
     margin:0;
     background:black;
     color:white;
     font-family:'VT323', monospace;
     text-align:center;
+    overflow-x:hidden;
 }
 
 /* CRT */
@@ -31,6 +33,7 @@ body{
 
 /* GLITCH */
 .glitch{animation:glitch 0.2s;}
+
 @keyframes glitch{
     0%{transform:translate(0);}
     25%{transform:translate(-3px,1px);}
@@ -52,6 +55,7 @@ button{
     width:300px;
     padding:10px;
     font-size:24px;
+    margin:8px;
 }
 
 /* BOOT */
@@ -66,9 +70,23 @@ button{
     z-index:9999;
 }
 
-#logo{width:22vw;max-width:220px;opacity:0;}
-#subtitle{font-size:52px;margin-top:20px;opacity:0;}
-#enterPrompt{margin-top:25px;font-size:24px;opacity:0;}
+#logo{
+    width:22vw;
+    max-width:220px;
+    opacity:0;
+}
+
+#subtitle{
+    font-size:52px;
+    margin-top:20px;
+    opacity:0;
+}
+
+#enterPrompt{
+    margin-top:25px;
+    font-size:24px;
+    opacity:0;
+}
 
 /* AUDIO BOX */
 #imgBox{
@@ -79,6 +97,50 @@ button{
     background-size:cover;
     background-position:center;
 }
+
+video{
+    width:90%;
+    max-width:700px;
+    filter:grayscale(1) contrast(1.4);
+}
+
+input{
+    font-family:'VT323';
+    font-size:24px;
+    margin:5px;
+    width:260px;
+    text-align:center;
+    background:black;
+    color:white;
+    border:1px solid white;
+    padding:5px;
+}
+
+@media(max-width:600px){
+
+    #subtitle{
+        font-size:34px;
+    }
+
+    #logo{
+        width:55vw;
+    }
+
+    button{
+        width:85%;
+        font-size:22px;
+    }
+
+    #imgBox{
+        width:90vw;
+        height:90vw;
+    }
+
+    input{
+        width:85%;
+    }
+}
+
 </style>
 </head>
 
@@ -92,21 +154,34 @@ button{
 
 <!-- BOOT -->
 <div id="bootScreen">
+
     <img id="logo" src="EPI.png">
-    <div id="subtitle">Epidemic Intelligence Service<br>Epidemiology</div>
-    <div id="enterPrompt">PRESS ENTER TO CONTINUE</div>
+
+    <div id="subtitle">
+        Epidemic Intelligence Service<br>
+        Epidemiology
+    </div>
+
+    <div id="enterPrompt">
+        PRESS ENTER OR TAP SCREEN
+    </div>
+
 </div>
 
 <!-- HOME -->
 <div id="home" class="section active">
+
 <h1>EIS TERMINAL</h1>
+
 <button onclick="nav('password')">SECURITY ACCESS</button>
 <button onclick="nav('audio')">AUDIO ARCHIVE</button>
 <button onclick="nav('videos')">VIDEO FILES</button>
+
 </div>
 
 <!-- PASSWORD -->
 <div id="password" class="section">
+
 <h2>ENTER 5 IDENTITIES</h2>
 
 <input id="n1"><br>
@@ -115,15 +190,17 @@ button{
 <input id="n4"><br>
 <input id="n5"><br>
 
-<br>
 <button onclick="check()">UNLOCK</button>
+
 <p id="status"></p>
-<br>
+
 <button onclick="nav('home')">BACK</button>
+
 </div>
 
 <!-- AUDIO -->
 <div id="audio" class="section">
+
 <h2>AUDIO LOGS</h2>
 
 <button onclick="playAudio('audio1.mp3','img1.jpg')">LOG 1</button>
@@ -132,20 +209,27 @@ button{
 <button onclick="playAudio('audio4.mp3','img4.jpg')">LOG 4</button>
 <button onclick="playAudio('audio5.mp3','img5.jpg')">LOG 5</button>
 
+<br><br>
+
 <audio id="player"></audio>
+
 <div id="imgBox"></div>
 
 <br>
-<button onclick="audioPlayPause()">PLAY/PAUSE</button>
+
+<button onclick="audioPlayPause()">PLAY / PAUSE</button>
 <button onclick="audioRewind()">-10s</button>
 <button onclick="audioForward()">+10s</button>
 
 <br><br>
+
 <button onclick="nav('home')">BACK</button>
+
 </div>
 
 <!-- VIDEOS -->
 <div id="videos" class="section">
+
 <h2>VIDEO FILES</h2>
 
 <video controls src="video1.mp4"></video><br>
@@ -153,13 +237,11 @@ button{
 <video controls src="video3.mp4"></video><br>
 <video controls src="video4.mp4"></video><br>
 <video controls src="video5.mp4"></video><br>
-<video controls src="video6.mp4"></video><br>
-<video controls src="video7.mp4"></video><br>
-<video controls src="video8.mp4"></video><br>
-<video controls src="video9.mp4"></video><br>
 
 <br>
+
 <button onclick="nav('home')">BACK</button>
+
 </div>
 
 <script>
@@ -167,29 +249,25 @@ button{
 let bootDone = false;
 let unlocked = false;
 
-/* BOOT SEQUENCE */
+/* START BOOT */
 window.addEventListener("load", () => {
 
     const logo = document.getElementById("logo");
     const sub = document.getElementById("subtitle");
     const prompt = document.getElementById("enterPrompt");
 
-    // 🔊 STARTUP SOUND (during boot)
-    const bootAudio = document.getElementById("bootSfx");
-    bootAudio.volume = 0.8;
-    bootAudio.play().catch(()=>{});
-
     let start = Date.now();
 
     function animate(){
+
         let t = (Date.now()-start)/1000;
-        let f = Math.min(1, t/7);
+        let f = Math.min(1, t/6);
 
         logo.style.opacity = f;
         sub.style.opacity = f;
         prompt.style.opacity = f;
 
-        if(t < 7){
+        if(t < 6){
             requestAnimationFrame(animate);
         } else {
             bootDone = true;
@@ -199,40 +277,72 @@ window.addEventListener("load", () => {
     animate();
 });
 
-/* ENTER TO EXIT BOOT */
+/* ENTER / TAP TO START */
+function startSystem(){
+
+    if(!bootDone) return;
+
+    document.getElementById("bootScreen").style.display = "none";
+
+    const bootAudio = document.getElementById("bootSfx");
+
+    bootAudio.volume = 0.8;
+    bootAudio.play().catch(()=>{});
+}
+
 window.addEventListener("keydown",(e)=>{
-    if(e.key==="Enter" && bootDone){
-        document.getElementById("bootScreen").style.display="none";
+    if(e.key === "Enter"){
+        startSystem();
     }
 });
 
+document.getElementById("bootScreen").addEventListener("click", startSystem);
+document.getElementById("bootScreen").addEventListener("touchstart", startSystem);
+
 /* NAVIGATION */
 function nav(id){
+
     if(!bootDone) return;
 
-    // lock audio until password solved
     if(id === "audio" && !unlocked){
-        document.getElementById("status").innerText = "ACCESS REQUIRED";
+
+        nav("password");
+
+        document.getElementById("status").innerText =
+        "ACCESS REQUIRED";
+
         return;
     }
 
     document.body.classList.add("glitch");
-    setTimeout(()=>document.body.classList.remove("glitch"),200);
+
+    setTimeout(()=>{
+        document.body.classList.remove("glitch");
+    },200);
 
     document.querySelectorAll(".section")
-        .forEach(s=>s.classList.remove("active"));
+    .forEach(s=>s.classList.remove("active"));
 
-    document.getElementById(id).classList.add("active");
+    document.getElementById(id)
+    .classList.add("active");
 
-    document.getElementById("clickSfx").play().catch(()=>{});
+    document.getElementById("clickSfx")
+    .play()
+    .catch(()=>{});
 }
 
-/* PASSWORD SYSTEM */
-const names=["Sarah","David","Marcus","Olivia","Daniel"];
+/* PASSWORD */
+const names = [
+    "Sarah",
+    "David",
+    "Marcus",
+    "Olivia",
+    "Daniel"
+];
 
 function check(){
 
-    let input=[
+    let input = [
         n1.value.trim(),
         n2.value.trim(),
         n3.value.trim(),
@@ -243,27 +353,51 @@ function check(){
     let ok = names.every(n => input.includes(n));
 
     if(ok){
+
         unlocked = true;
-        document.getElementById("unlockSfx").play().catch(()=>{});
-        status.innerText="ACCESS GRANTED";
-        setTimeout(()=>nav("audio"),800);
+
+        document.getElementById("unlockSfx")
+        .play()
+        .catch(()=>{});
+
+        status.innerText = "ACCESS GRANTED";
+
+        setTimeout(()=>{
+            nav("audio");
+        },800);
+
     } else {
-        status.innerText="ACCESS DENIED";
+
+        status.innerText = "ACCESS DENIED";
     }
 }
 
 /* AUDIO */
-let audio=document.getElementById("player");
+let audio = document.getElementById("player");
 
-function playAudio(s,i){
-    audio.src=s;
+function playAudio(src,img){
+
+    audio.src = src;
+
     audio.play();
-    imgBox.style.backgroundImage=`url(${i})`;
+
+    document.getElementById("imgBox")
+    .style.backgroundImage = `url(${img})`;
 }
 
-function audioPlayPause(){audio.paused?audio.play():audio.pause();}
-function audioRewind(){audio.currentTime=Math.max(0,audio.currentTime-10);}
-function audioForward(){audio.currentTime=Math.min(audio.duration,audio.currentTime+10);}
+function audioPlayPause(){
+    audio.paused ? audio.play() : audio.pause();
+}
+
+function audioRewind(){
+    audio.currentTime =
+    Math.max(0, audio.currentTime - 10);
+}
+
+function audioForward(){
+    audio.currentTime =
+    Math.min(audio.duration, audio.currentTime + 10);
+}
 
 </script>
 
