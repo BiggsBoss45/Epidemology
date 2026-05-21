@@ -221,6 +221,8 @@ window.addEventListener("keydown", e=>{
     }
 });
 
+
+/* ================= NAV ================= */
 function startBoot(){
 
     const canvas = document.getElementById("bootCanvas");
@@ -229,17 +231,21 @@ function startBoot(){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const cx = canvas.width/2;
-    const cy = canvas.height/2;
+    const w = canvas.width;
+    const h = canvas.height;
+
+    const cx = w/2;
+    const cy = h/2;
 
     let particles = [];
 
-    for(let i=0;i<3000;i++){
+    // more particles = smoother “fog into logo”
+    for(let i=0;i<4000;i++){
         particles.push({
-            x:Math.random()*canvas.width,
-            y:Math.random()*canvas.height,
-            tx:cx,
-            ty:cy
+            x: Math.random()*w,
+            y: Math.random()*h,
+            tx: cx,
+            ty: cy
         });
     }
 
@@ -247,38 +253,45 @@ function startBoot(){
 
     function animate(){
 
-        ctx.fillStyle="black";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
+        let t = (Date.now() - start)/1000;
 
-        let t=(Date.now()-start)/1000;
+        ctx.fillStyle = "black";
+        ctx.fillRect(0,0,w,h);
 
-        let fade = Math.min(1, t/3);
+        /* ================= HUGE CDC LOGO ================= */
+        let fade = Math.min(1, t / 3);
 
-        ctx.fillStyle = `rgba(255,255,255,${fade})`;
-        ctx.font="140px VT323";
-        ctx.textAlign="center";
-        ctx.fillText("CDC",cx,cy);
+        ctx.save();
+        ctx.globalAlpha = fade;
 
+        ctx.fillStyle = "white";
+        ctx.font = `${Math.floor(w * 0.22)}px VT323`; 
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.fillText("CDC", cx, cy);
+
+        ctx.restore();
+
+        /* ================= PARTICLES OVERLAY ================= */
         particles.forEach(p=>{
-            p.x += (p.tx-p.x)*0.03;
-            p.y += (p.ty-p.y)*0.03;
+            p.x += (p.tx - p.x)*0.04;
+            p.y += (p.ty - p.y)*0.04;
 
-            ctx.fillStyle="white";
+            ctx.fillStyle = "rgba(255,255,255,0.7)";
             ctx.fillRect(p.x,p.y,2,2);
         });
 
-        if(t<9){
+        /* ================= END ================= */
+        if(t < 6){   // shorter + cleaner boot (change if you want)
             requestAnimationFrame(animate);
-        }else{
-            document.getElementById("bootScreen").style.display="none";
+        } else {
+            document.getElementById("bootScreen").style.display = "none";
         }
     }
 
     animate();
 }
-
-/* ================= NAV ================= */
-
 function nav(id){
     document.getElementById("clickSfx").play().catch(()=>{});
 
