@@ -70,7 +70,7 @@ button{
 #subtitle{font-size:52px;margin-top:20px;opacity:0;}
 #enterPrompt{margin-top:25px;font-size:24px;opacity:0;}
 
-/* AUDIO VIS */
+/* AUDIO BOX */
 #imgBox{
     width:300px;
     height:300px;
@@ -78,12 +78,6 @@ button{
     border:1px solid white;
     background-size:cover;
     background-position:center;
-}
-
-video{
-    width:90%;
-    max-width:700px;
-    filter:grayscale(1) contrast(1.4);
 }
 </style>
 </head>
@@ -171,13 +165,19 @@ video{
 <script>
 
 let bootDone = false;
+let unlocked = false;
 
-/* BOOT */
+/* BOOT SEQUENCE */
 window.addEventListener("load", () => {
 
     const logo = document.getElementById("logo");
     const sub = document.getElementById("subtitle");
     const prompt = document.getElementById("enterPrompt");
+
+    // 🔊 STARTUP SOUND (during boot)
+    const bootAudio = document.getElementById("bootSfx");
+    bootAudio.volume = 0.8;
+    bootAudio.play().catch(()=>{});
 
     let start = Date.now();
 
@@ -199,17 +199,22 @@ window.addEventListener("load", () => {
     animate();
 });
 
-/* ENTER TO CONTINUE */
+/* ENTER TO EXIT BOOT */
 window.addEventListener("keydown",(e)=>{
     if(e.key==="Enter" && bootDone){
         document.getElementById("bootScreen").style.display="none";
-        document.getElementById("bootSfx").play().catch(()=>{});
     }
 });
 
-/* NAV */
+/* NAVIGATION */
 function nav(id){
     if(!bootDone) return;
+
+    // lock audio until password solved
+    if(id === "audio" && !unlocked){
+        document.getElementById("status").innerText = "ACCESS REQUIRED";
+        return;
+    }
 
     document.body.classList.add("glitch");
     setTimeout(()=>document.body.classList.remove("glitch"),200);
@@ -222,10 +227,11 @@ function nav(id){
     document.getElementById("clickSfx").play().catch(()=>{});
 }
 
-/* PASSWORD */
+/* PASSWORD SYSTEM */
 const names=["Sarah","David","Marcus","Olivia","Daniel"];
 
 function check(){
+
     let input=[
         n1.value.trim(),
         n2.value.trim(),
@@ -237,6 +243,7 @@ function check(){
     let ok = names.every(n => input.includes(n));
 
     if(ok){
+        unlocked = true;
         document.getElementById("unlockSfx").play().catch(()=>{});
         status.innerText="ACCESS GRANTED";
         setTimeout(()=>nav("audio"),800);
