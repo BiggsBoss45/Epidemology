@@ -10,33 +10,64 @@
 
 <style>
 
+/* ================= BASE ================= */
+
 body{
     margin:0;
     background:black;
     color:white;
     font-family:'VT323', monospace;
     text-align:center;
+    overflow-x:hidden;
+    animation:flicker 3s infinite;
 }
 
-/* CRT */
-body::before{
-    content:"";
+/* ================= CRT OVERLAY (FIXED FULL SCREEN) ================= */
+
+#crt{
     position:fixed;
-    width:100%;
-    height:100%;
-    background:repeating-linear-gradient(
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    pointer-events:none;
+    z-index:9998;
+
+    background: repeating-linear-gradient(
         to bottom,
-        rgba(255,255,255,0.04),
+        rgba(255,255,255,0.05),
         rgba(0,0,0,0.05) 2px
     );
-    pointer-events:none;
 }
 
-/* SECTIONS */
+#crt::after{
+    content:"";
+    position:absolute;
+    width:100%;
+    height:100%;
+    background: radial-gradient(
+        circle at center,
+        rgba(0,0,0,0) 55%,
+        rgba(0,0,0,0.7) 100%
+    );
+}
+
+/* ================= FLICKER ================= */
+
+@keyframes flicker{
+    0%{opacity:1;}
+    97%{opacity:0.98;}
+    98%{opacity:0.92;}
+    100%{opacity:1;}
+}
+
+/* ================= SECTIONS ================= */
+
 .section{display:none;padding:20px;}
 .active{display:block;}
 
-/* BUTTONS */
+/* ================= BUTTONS ================= */
+
 button{
     font-family:'VT323';
     background:black;
@@ -47,7 +78,8 @@ button{
     font-size:24px;
 }
 
-/* IMAGE */
+/* ================= IMAGE ================= */
+
 .imgBox{
     width:300px;
     height:300px;
@@ -57,11 +89,27 @@ button{
     background-position:center;
 }
 
-/* VIDEO */
+/* ================= VIDEO ================= */
+
 video{
     width:90%;
     max-width:700px;
     filter:grayscale(1) contrast(1.4);
+}
+
+/* ================= BOOT ================= */
+
+#bootScreen{
+    position:fixed;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    background:black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:9999;
 }
 
 </style>
@@ -69,19 +117,23 @@ video{
 
 <body>
 
-<!-- AUDIO FILES (EXPLICIT) -->
+<!-- CRT LAYER -->
+<div id="crt"></div>
+
+<!-- AUDIO -->
 <audio id="clickSfx" src="click.mp3"></audio>
 <audio id="bootSfx" src="startup.mp3"></audio>
 <audio id="unlockSfx" src="unlock.mp3"></audio>
 
-<!-- BOOT SCREEN -->
+<!-- BOOT -->
 <div id="bootScreen">
-    <h1>PRESS ENTER</h1>
+    <h1 id="bootText">PRESS ENTER</h1>
 </div>
 
 <!-- HOME -->
 <div id="home" class="section active">
-<h1>CDC ARCHIVE</h1>
+
+<h1>CDC ARCHIVE TERMINAL</h1>
 
 <button onclick="nav('videos')">VIDEO FILES</button>
 <button onclick="nav('password')">AUDIO ARCHIVE</button>
@@ -104,6 +156,9 @@ video{
 <button onclick="check()">UNLOCK</button>
 <p id="status"></p>
 
+<br>
+<button onclick="nav('home')">BACK</button>
+
 </div>
 
 <!-- AUDIO -->
@@ -121,9 +176,12 @@ video{
 
 <div id="imgBox" class="imgBox"></div>
 
+<br>
+<button onclick="nav('home')">BACK</button>
+
 </div>
 
-<!-- VIDEOS (EXPLICITLY LISTED 1–9) -->
+<!-- VIDEOS -->
 <div id="videos" class="section">
 
 <h2>VIDEO FILES</h2>
@@ -138,23 +196,49 @@ video{
 <video controls src="video8.mp4"></video><br>
 <video controls src="video9.mp4"></video><br>
 
+<br>
+<button onclick="nav('home')">BACK</button>
+
 </div>
 
 <script>
 
-/* ================= BOOT ================= */
+/* ================= STATE ================= */
 
-let started=false;
+let bootStarted = false;
 
-window.addEventListener("keydown",e=>{
-    if(e.key==="Enter"&&!started){
-        started=true;
+/* ================= BOOT (9s + SOUND) ================= */
+
+window.addEventListener("keydown", e => {
+    if(e.key === "Enter" && !bootStarted){
+
+        bootStarted = true;
 
         document.getElementById("bootSfx").play().catch(()=>{});
 
-        setTimeout(()=>{
-            document.getElementById("bootScreen").style.display="none";
-        },2500);
+        let t0 = Date.now();
+
+        function bootLoop(){
+            let t = (Date.now() - t0) / 1000;
+
+            if(t < 3){
+                bootText.innerText = "INITIALIZING...";
+            }
+            else if(t < 6){
+                bootText.innerText = "RECOVERING FILES...";
+            }
+            else if(t < 9){
+                bootText.innerText = "DECRYPTING ARCHIVE...";
+            }
+
+            if(t < 9){
+                requestAnimationFrame(bootLoop);
+            }else{
+                document.getElementById("bootScreen").style.display="none";
+            }
+        }
+
+        bootLoop();
     }
 });
 
@@ -164,22 +248,26 @@ function nav(id){
     document.getElementById("clickSfx").play().catch(()=>{});
 
     document.querySelectorAll(".section")
-    .forEach(s=>s.classList.remove("active"));
+    .forEach(s => s.classList.remove("active"));
 
     document.getElementById(id).classList.add("active");
 }
 
 /* ================= PASSWORD ================= */
 
-const names=["Sarah","David","Marcus","Olivia","Daniel"];
+const names = ["Sarah","David","Marcus","Olivia","Daniel"];
 
 function check(){
 
-    let input=[
-        n1.value,n2.value,n3.value,n4.value,n5.value
+    let input = [
+        n1.value.trim(),
+        n2.value.trim(),
+        n3.value.trim(),
+        n4.value.trim(),
+        n5.value.trim()
     ];
 
-    let ok = names.every(n=>input.includes(n));
+    let ok = names.every(n => input.includes(n));
 
     if(ok){
         document.getElementById("unlockSfx").play().catch(()=>{});
@@ -190,7 +278,7 @@ function check(){
     }
 }
 
-/* ================= AUDIO ================= */
+/* ================= AUDIO + IMAGE ================= */
 
 function playAudio(src,img){
 
@@ -198,7 +286,7 @@ function playAudio(src,img){
     p.src=src;
     p.play();
 
-    document.getElementById("imgBox").style.backgroundImage=
+    document.getElementById("imgBox").style.backgroundImage =
     `url(${img})`;
 }
 
