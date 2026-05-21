@@ -62,6 +62,21 @@ body::after{
     100%{opacity:1;}
 }
 
+/* ================= VHS GLITCH ================= */
+
+.glitch{
+    animation: glitch 0.15s infinite;
+}
+
+@keyframes glitch{
+    0%{transform:translate(0);}
+    20%{transform:translate(-2px,1px);}
+    40%{transform:translate(2px,-1px);}
+    60%{transform:translate(-1px,2px);}
+    80%{transform:translate(1px,-2px);}
+    100%{transform:translate(0);}
+}
+
 /* ================= SECTIONS ================= */
 
 .section{display:none;padding:20px;}
@@ -106,6 +121,24 @@ video{
     display:block;
 }
 
+/* corrupted popup */
+.corrupt{
+    position:fixed;
+    top:20%;
+    left:50%;
+    transform:translateX(-50%);
+    color:red;
+    font-size:28px;
+    opacity:0;
+    animation:pop 1.5s forwards;
+}
+
+@keyframes pop{
+    0%{opacity:0; transform:translateX(-50%) scale(0.5);}
+    50%{opacity:1;}
+    100%{opacity:0; transform:translateX(-50%) scale(1.2);}
+}
+
 </style>
 </head>
 
@@ -113,12 +146,10 @@ video{
 
 <div id="crt"></div>
 
-<!-- AUDIO -->
 <audio id="clickSfx" src="click.mp3"></audio>
 <audio id="bootSfx" src="startup.mp3"></audio>
 <audio id="unlockSfx" src="unlock.mp3"></audio>
 
-<!-- BOOT -->
 <div id="bootScreen">
     <canvas id="bootCanvas"></canvas>
 </div>
@@ -166,7 +197,6 @@ video{
 <button onclick="playAudio('audio5.mp3','img5.jpg')">LOG 5</button>
 
 <audio id="player"></audio>
-
 <div id="imgBox" class="imgBox"></div>
 
 <br>
@@ -209,9 +239,9 @@ video{
 
 <script>
 
-/* ================= BOOT ================= */
-
 let bootStarted = false;
+
+/* ================= BOOT ================= */
 
 window.addEventListener("keydown", e=>{
     if(e.key==="Enter" && !bootStarted){
@@ -221,8 +251,8 @@ window.addEventListener("keydown", e=>{
     }
 });
 
+/* ================= BOOT SEQUENCE ================= */
 
-/* ================= NAV ================= */
 function startBoot(){
 
     const canvas = document.getElementById("bootCanvas");
@@ -231,67 +261,64 @@ function startBoot(){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const w = canvas.width;
-    const h = canvas.height;
-
-    const cx = w/2;
-    const cy = h/2;
-
-    let particles = [];
-
-    // more particles = smoother “fog into logo”
-    for(let i=0;i<4000;i++){
-        particles.push({
-            x: Math.random()*w,
-            y: Math.random()*h,
-            tx: cx,
-            ty: cy
-        });
-    }
+    const cx = canvas.width/2;
+    const cy = canvas.height/2;
 
     let start = Date.now();
 
+    function corruptPopup(){
+        let div = document.createElement("div");
+        div.className="corrupt";
+        div.innerText="FILE CORRUPTED // RECOVERING";
+        document.body.appendChild(div);
+        setTimeout(()=>div.remove(),1500);
+    }
+
+    setInterval(()=>{
+        if(!bootStarted) return;
+        corruptPopup();
+    },900);
+
     function animate(){
 
-        let t = (Date.now() - start)/1000;
+        let t = (Date.now()-start)/1000;
 
-        ctx.fillStyle = "black";
-        ctx.fillRect(0,0,w,h);
+        ctx.fillStyle="black";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
 
-        /* ================= HUGE CDC LOGO ================= */
-        let fade = Math.min(1, t / 3);
+        /* HUGE FADE-IN CDC LOGO */
+        let fade = Math.min(1, t/9);
 
-        ctx.save();
         ctx.globalAlpha = fade;
+        ctx.fillStyle="white";
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
 
-        ctx.fillStyle = "white";
-        ctx.font = `${Math.floor(w * 0.22)}px VT323`; 
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        let size = canvas.width * 0.25;
+        ctx.font = `${size}px VT323`;
 
         ctx.fillText("CDC", cx, cy);
 
-        ctx.restore();
+        ctx.globalAlpha = 1;
 
-        /* ================= PARTICLES OVERLAY ================= */
-        particles.forEach(p=>{
-            p.x += (p.tx - p.x)*0.04;
-            p.y += (p.ty - p.y)*0.04;
+        /* VHS noise flicker */
+        if(Math.random() < 0.08){
+            ctx.fillStyle="rgba(255,255,255,0.03)";
+            ctx.fillRect(0,Math.random()*canvas.height,canvas.width,2);
+        }
 
-            ctx.fillStyle = "rgba(255,255,255,0.7)";
-            ctx.fillRect(p.x,p.y,2,2);
-        });
-
-        /* ================= END ================= */
-        if(t < 6){   // shorter + cleaner boot (change if you want)
+        if(t<9){
             requestAnimationFrame(animate);
-        } else {
-            document.getElementById("bootScreen").style.display = "none";
+        }else{
+            document.getElementById("bootScreen").style.display="none";
         }
     }
 
     animate();
 }
+
+/* ================= NAV ================= */
+
 function nav(id){
     document.getElementById("clickSfx").play().catch(()=>{});
 
@@ -299,31 +326,6 @@ function nav(id){
     .forEach(s=>s.classList.remove("active"));
 
     document.getElementById(id).classList.add("active");
-}
-
-/* ================= PASSWORD ================= */
-
-const names=["Sarah","David","Marcus","Olivia","Daniel"];
-
-function check(){
-
-    let input=[
-        n1.value.trim(),
-        n2.value.trim(),
-        n3.value.trim(),
-        n4.value.trim(),
-        n5.value.trim()
-    ];
-
-    let ok = names.every(n=>input.includes(n));
-
-    if(ok){
-        document.getElementById("unlockSfx").play().catch(()=>{});
-        document.getElementById("status").innerText="ACCESS GRANTED";
-        setTimeout(()=>nav("audio"),800);
-    }else{
-        document.getElementById("status").innerText="DENIED";
-    }
 }
 
 /* ================= AUDIO ================= */
