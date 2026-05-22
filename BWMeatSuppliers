@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shipment Logs</title>
+
+<style>
+body{
+    background:black;
+    color:white;
+    font-family:monospace;
+    padding:30px;
+}
+
+h1{
+    color:red;
+}
+
+.log{
+    border:1px solid white;
+    padding:15px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>B&W Swine Incident</h1>
+
+<div class="log">
+DATE: 10/14/26<br><br>
+
+Roughtly 1000 swine pretaining to group A5 were found dead at approximately 5:30am.<br>
+Analysis determined no outside threat but rather an internal one.<br>
+Each swine was found with bite marks matching those of a pig.<br>
+Of the 1000 swine 200 of them were found with their stomachs ruptered.<br>
+Analysis of the swine's stomach reveal:<br>
+Bone and teeth fragments.<br>
+Muscle tissue with proteins matching those from a pig.<br>
+and stomach Ulcers.<br>
+Cause Unknown.<br>
+
+</div>
+
+<h1>Letter from CEO Ken Park</h1>
+
+<div class="log">
+DATE: 10/17/26<br><br>
+
+How it is possible that something like this went under the rug?<br>
+We ship nationwide! We shipped Swine from A5 to Miami, Mason, and Salado! <br>
+And they distributed our products to stores across this country!<br>
+It's only a matter of time until someone calls in sick after eating pork from our company...<br>
+
+I've seen some of our employees laugh and dismiss our current predicament but let me be clear:<br>
+We don't have a patient zero, we don't know how this disease spread, and we don't know how many of our current swine are infected.<br>
+What we are facing is an unknown pathogen that we have to PRAY is not infectious to people!<br>
+one pig gives us 160lb of meat thats:<br>
+Ham<br>
+Sausage<br>
+Bacon<br>
+Ribs<br>
+And a lot of things that the average american, including your families, eat on a daily basis.<br>
+
+I pray nothing happens...<br>
+
+</div>
+
+</body>
+</html>
