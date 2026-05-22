@@ -621,6 +621,16 @@ function openDoc(id){
     .style.display="block";
 }
 
+/* SECRET DOCUMENT TABS */
+function openSecretDoc(id){
+
+    document.querySelectorAll("#bwPage .docBox")
+    .forEach(d => d.style.display = "none");
+
+    document.getElementById(id)
+    .style.display = "block";
+}
+
 /* AUDIO */
 let audio = document.getElementById("player");
 
