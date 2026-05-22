@@ -317,14 +317,39 @@ input{
 
 <h1>B&W MEAT SUPPLIERS</h1>
 
-<div class="docBox">
+<button onclick="openSecretDoc('bwReport')">
+Internal Report
+</button>
 
-<iframe src="bw_meat_suppliers.txt"
-width="100%"
-height="500"
-style="background:black;color:white;border:1px solid white;">
-</iframe>
+<button onclick="openSecretDoc('shipmentLogs')">
+Shipment Logs
+</button>
 
+<button onclick="openSecretDoc('employeeFile')">
+Employee File
+</button>
+
+<br><br>
+
+<!-- REPORT -->
+<div id="bwReport" class="docBox" style="display:none;">
+    <iframe src="BWMeatSuppliers.html"
+    width="100%"
+    height="500"></iframe>
+</div>
+
+<!-- SHIPMENT LOGS -->
+<div id="SwineSicknessReport" class="docBox" style="display:none;">
+    <iframe src="ShipmentLogs.html"
+    width="100%"
+    height="500"></iframe>
+</div>
+
+<!-- EMPLOYEE FILE -->
+<div id="EmployeeInterview" class="docBox" style="display:none;">
+    <iframe src="EmployeeFile.html"
+    width="100%"
+    height="500"></iframe>
 </div>
 
 <br>
@@ -332,7 +357,6 @@ style="background:black;color:white;border:1px solid white;">
 <button onclick="nav('documents')">BACK</button>
 
 </div>
-
 <!-- AUDIO -->
 <div id="audio" class="section">
 
