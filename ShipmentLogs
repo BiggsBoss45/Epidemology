@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shipment Logs</title>
+
+<style>
+body{
+    background:black;
+    color:white;
+    font-family:monospace;
+    padding:30px;
+}
+
+h1{
+    color:red;
+}
+
+.log{
+    border:1px solid white;
+    padding:15px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>B&W SHIPPING LOGS</h1>
+
+<div class="log">
+DATE: 10/14/26<br><br>
+
+Shipment rerouted through Salado facility.<br>
+Inspection bypass authorized.<br>
+Temperature irregularities ignored.
+</div>
+
+<div class="log">
+DATE: 10/17/26<br><br>
+
+Two handlers reported severe nausea and memory loss.<br>
+Medical evaluation denied.
+</div>
+
+</body>
+</html>
