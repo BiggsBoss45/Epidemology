@@ -403,248 +403,246 @@ let unlocked = false;
 let docsUnlocked = false;
 let bootStarted = false;
 
-/* START BOOT */
+/* =========================
+   AUDIO (ANDROID SAFE)
+========================= */
+
+const bootSfx = document.getElementById("bootSfx");
+const clickSfx = document.getElementById("clickSfx");
+const unlockSfx = document.getElementById("unlockSfx");
+
+function safePlay(audio) {
+    if (!audio) return;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+}
+
+/* unlock audio on FIRST real interaction */
+function unlockAudio() {
+    safePlay(clickSfx);
+}
+
+/* =========================
+   BOOT SYSTEM
+========================= */
+
 window.addEventListener("load", () => {
 
     const logo = document.getElementById("logo");
     const sub = document.getElementById("subtitle");
     const prompt = document.getElementById("enterPrompt");
 
-    const bootAudio = document.getElementById("bootSfx");
+    function beginBoot() {
 
-    function beginBoot(){
-
-        if(bootStarted) return;
+        if (bootStarted) return;
 
         bootStarted = true;
 
-        bootAudio.volume = 0.8;
-        bootAudio.play().catch(()=>{});
+        safePlay(bootSfx);
 
-        let start = Date.now();
+        let start = performance.now();
 
-        function animate(){
+        function animate(now) {
 
-            let t = (Date.now()-start)/1000;
-            let f = Math.min(1, t/6);
+            let t = (now - start) / 1000;
+            let f = Math.min(1, t / 6);
 
             logo.style.opacity = f;
             sub.style.opacity = f;
             prompt.style.opacity = f;
 
-            if(t < 6){
+            if (t < 6) {
                 requestAnimationFrame(animate);
             } else {
                 bootDone = true;
             }
         }
 
-        animate();
+        requestAnimationFrame(animate);
     }
 
-    // keyboard
-    document.addEventListener("keydown",(e)=>{
+    /* =========================
+       ANDROID FIX: pointerdown > click
+    ========================= */
 
-        if(e.key === "Enter"){
+    document.getElementById("bootScreen")
+        .addEventListener("pointerdown", () => {
 
-            if(!bootStarted){
+            unlockAudio();
+
+            if (!bootStarted) {
                 beginBoot();
-            } else if(bootDone){
+            } else if (bootDone) {
+                startSystem();
+            }
+        }, { passive: true });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+
+            unlockAudio();
+
+            if (!bootStarted) {
+                beginBoot();
+            } else if (bootDone) {
                 startSystem();
             }
         }
     });
-
-    // click
-    document.getElementById("bootScreen")
-    .addEventListener("click", ()=>{
-
-        if(!bootStarted){
-            beginBoot();
-        } else if(bootDone){
-            startSystem();
-        }
-    });
-
-    // touch
-    document.getElementById("bootScreen")
-    .addEventListener("touchstart", ()=>{
-
-        if(!bootStarted){
-            beginBoot();
-        } else if(bootDone){
-            startSystem();
-        }
-    });
 });
 
-/* START SYSTEM */
-function startSystem(){
+/* =========================
+   START SYSTEM
+========================= */
 
-    if(!bootDone) return;
+function startSystem() {
+
+    if (!bootDone) return;
 
     document.getElementById("bootScreen").style.display = "none";
 }
 
-/* NAVIGATION */
-function nav(id){
+/* =========================
+   NAVIGATION (ANDROID FIXED)
+========================= */
 
-    if(!bootDone) return;
+function nav(id) {
 
-    if(id === "audio" && !unlocked){
+    if (!bootStarted) return;
 
-        nav("password");
+    if (!bootDone && bootStarted) return;
 
-        document.getElementById("status").innerText =
-        "ACCESS REQUIRED";
-
-        return;
+    if (id === "audio" && !unlocked) {
+        document.getElementById("status").innerText = "ACCESS REQUIRED";
+        return nav("password");
     }
 
-    if(id === "documents" && !docsUnlocked){
-
-        nav("docPassword");
-
-        document.getElementById("docStatus").innerText =
-        "DOCUMENT ACCESS REQUIRED";
-
-        return;
+    if (id === "documents" && !docsUnlocked) {
+        document.getElementById("docStatus").innerText = "DOCUMENT ACCESS REQUIRED";
+        return nav("docPassword");
     }
 
     document.body.classList.add("glitch");
-
-    setTimeout(()=>{
-        document.body.classList.remove("glitch");
-    },200);
+    setTimeout(() => document.body.classList.remove("glitch"), 200);
 
     document.querySelectorAll(".section")
-    .forEach(s=>s.classList.remove("active"));
+        .forEach(s => s.classList.remove("active"));
 
-    document.getElementById(id)
-    .classList.add("active");
+    const target = document.getElementById(id);
+    if (target) target.classList.add("active");
 
-    document.getElementById("clickSfx")
-    .play()
-    .catch(()=>{});
+    safePlay(clickSfx);
 }
 
-/* PASSWORD */
-const names = [
-    "Sarah",
-    "David",
-    "Marcus",
-    "Olivia",
-    "Daniel"
-];
+/* =========================
+   PASSWORD
+========================= */
 
-function check(){
+const names = ["Sarah", "David", "Marcus", "Olivia", "Daniel"];
+
+function check() {
 
     let input = [
-        n1.value.trim(),
-        n2.value.trim(),
-        n3.value.trim(),
-        n4.value.trim(),
-        n5.value.trim()
+        document.getElementById("n1").value.trim(),
+        document.getElementById("n2").value.trim(),
+        document.getElementById("n3").value.trim(),
+        document.getElementById("n4").value.trim(),
+        document.getElementById("n5").value.trim()
     ];
 
     let ok = names.every(n => input.includes(n));
 
-    if(ok){
+    const status = document.getElementById("status");
 
+    if (ok) {
         unlocked = true;
-
-        document.getElementById("unlockSfx")
-        .play()
-        .catch(()=>{});
+        safePlay(unlockSfx);
 
         status.innerText = "ACCESS GRANTED";
 
-        setTimeout(()=>{
-            nav("audio");
-        },800);
+        setTimeout(() => nav("audio"), 800);
 
     } else {
-
         status.innerText = "ACCESS DENIED";
     }
 }
 
-/* DOCUMENT PASSWORD */
-function checkDocs(){
+/* =========================
+   DOC PASSWORD
+========================= */
 
-    let pass =
-    document.getElementById("docPass")
-    .value
-    .trim()
-    .toLowerCase();
+function checkDocs() {
 
-    if(pass === "salado texas"){
+    let pass = document.getElementById("docPass").value.trim().toLowerCase();
+
+    const docStatus = document.getElementById("docStatus");
+
+    if (pass === "salado texas") {
 
         docsUnlocked = true;
+        safePlay(unlockSfx);
 
-        document.getElementById("unlockSfx")
-        .play()
-        .catch(()=>{});
+        docStatus.innerText = "DOCUMENT ACCESS GRANTED";
 
-        document.getElementById("docStatus")
-        .innerText = "DOCUMENT ACCESS GRANTED";
-
-        setTimeout(()=>{
-            nav("documents");
-        },800);
+        setTimeout(() => nav("documents"), 800);
 
     } else {
-
-        document.getElementById("docStatus")
-        .innerText = "ACCESS DENIED";
+        docStatus.innerText = "ACCESS DENIED";
     }
 }
 
-/* DOCUMENT TABS */
-function openDoc(id){
+/* =========================
+   DOC TABS
+========================= */
+
+function openDoc(id) {
 
     document.querySelectorAll(".docBox")
-    .forEach(d=>d.style.display="none");
+        .forEach(d => d.style.display = "none");
 
-    document.getElementById(id)
-    .style.display="block";
+    const el = document.getElementById(id);
+    if (el) el.style.display = "block";
 }
 
-/* SECRET DOCUMENT TABS */
-function openSecretDoc(id){
+/* =========================
+   SECRET DOCS
+========================= */
+
+function openSecretDoc(id) {
 
     document.querySelectorAll("#bwPage .docBox")
-    .forEach(d => d.style.display = "none");
+        .forEach(d => d.style.display = "none");
 
-    document.getElementById(id)
-    .style.display = "block";
+    const el = document.getElementById(id);
+    if (el) el.style.display = "block";
 }
 
-/* AUDIO */
+/* =========================
+   AUDIO PLAYER (ANDROID SAFE)
+========================= */
+
 let audio = document.getElementById("player");
 
-function playAudio(src,img){
+function playAudio(src, img) {
 
     audio.src = src;
+    audio.load();
 
-    audio.play();
+    audio.play().catch(() => {});
 
-    document.getElementById("imgBox")
-    .style.backgroundImage = `url(${img})`;
+    document.getElementById("imgBox").style.backgroundImage = `url(${img})`;
 }
 
-function audioPlayPause(){
+function audioPlayPause() {
     audio.paused ? audio.play() : audio.pause();
 }
 
-function audioRewind(){
-    audio.currentTime =
-    Math.max(0, audio.currentTime - 10);
+function audioRewind() {
+    audio.currentTime = Math.max(0, audio.currentTime - 10);
 }
 
-function audioForward(){
-    audio.currentTime =
-    Math.min(audio.duration, audio.currentTime + 10);
+function audioForward() {
+    audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
 }
 
 </script>
